@@ -2,6 +2,12 @@
 
 class Pedido
 {
+
+    // Quien hizo el pedido ? no importa quien, importa quien tenga el numerodePedido?
+
+    // un atributo que sea un array de productos ??
+    // un atributo que sea un array de productos ??
+
     public $id;
     public $mesaId; //codigo de identificación o Id
     public $numeroDePedido;
