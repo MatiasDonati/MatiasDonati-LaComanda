@@ -1,0 +1,577 @@
+{
+	"info": {
+		"_postman_id": "c97685e0-a3ec-4c23-949f-3ec61d447902",
+		"name": "LaComanda",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16919346"
+	},
+	"item": [
+		{
+			"name": "localhost:666",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:666",
+					"host": [
+						"localhost"
+					],
+					"port": "666"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/Programacion/LaComanda/app",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/Programacion/LaComanda/app/usuarios/pedro",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/usuarios/pedro",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"usuarios",
+						"pedro"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/Programacion/LaComanda/app/usuarios",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "usuario",
+							"value": "Martinete",
+							"type": "text"
+						},
+						{
+							"key": "clave",
+							"value": "1234",
+							"type": "text"
+						},
+						{
+							"key": "rol",
+							"value": "Mozo",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/usuarios/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"usuarios",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/Programacion/LaComanda/app/usuarios/",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"usuario\": \"MozoPepe\",\n  \"clave\": \"1234\",\n  \"rol\": \"Mozo\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/usuarios/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"usuarios",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/Programacion/LaComanda/app/usuarios/1",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/usuarios/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"usuarios",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Productos GET",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"productos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar Un Producto",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/productos/Ravioles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"productos",
+						"Ravioles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cargar un Producto",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "nombre",
+							"value": "Fideos",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "Comida",
+							"type": "text"
+						},
+						{
+							"key": "precio",
+							"value": "5000",
+							"type": "text"
+						},
+						{
+							"key": "numeroDePedido",
+							"value": "abc45",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"productos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modificar Producto",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"AhoraSeLLamaPizza\",\n  \"tipo\": \"Comida\",\n  \"precio\": \"23\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/productos/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"productos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Borrar Producto",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/productos/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"productos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mesas Get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/mesas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"mesas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta 1 Mesa",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/mesas/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"mesas",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear MEsa",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "estado",
+							"value": "sarasa",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/mesas/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"mesas",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "modificar Mesa",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/mesas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"mesas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Borrar Mesa",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/mesas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"mesas",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pedidos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/pedidos/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"pedidos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar 1 pedido",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/pedidos/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"pedidos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cargar Pedido",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "mesaId",
+							"value": "432",
+							"type": "text"
+						},
+						{
+							"key": "numeroDePedido",
+							"value": "11111",
+							"type": "text"
+						},
+						{
+							"key": "tiempoEstimado",
+							"value": "15",
+							"type": "text"
+						},
+						{
+							"key": "estado",
+							"value": "pendiente",
+							"type": "text"
+						},
+						{
+							"key": "precio",
+							"value": "2250",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/pedidos/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"pedidos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pedido Modificar",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"estado\": \"Preparacione\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/pedidos/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"pedidos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Borrra pedido",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/Programacion/LaComanda/app/pedidos/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Programacion",
+						"LaComanda",
+						"app",
+						"pedidos",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
