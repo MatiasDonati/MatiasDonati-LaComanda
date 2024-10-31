@@ -2,36 +2,49 @@
 
 require_once './models/Pedido.php';
 require_once './interfaces/IApiUsable.php';
-require_once './models/Producto.php';
+
+require_once './models/ProductosPedidos.php';
 
 class PedidoController implements IApiUsable
 {
     public function CargarUno($request, $response, $args)
     {
-        $parametros = $request->getParsedBody();
-        
-        $mesaId = $parametros['mesaId'];
-        $numeroDePedido = $parametros['numeroDePedido'];
-        $tiempoEstimado = $parametros['tiempoEstimado'];
+        $json = file_get_contents('php://input');
+        $array = json_decode($json, true);
+
+        // $parametros = $request->getParsedBody();
+        $mesaId = $array['mesaId'];
+        $tiempoEstimado = $array['tiempoEstimado'];
         $fecha = date("Y-m-d");
-        $precio = $parametros['precio'];
-    
+        $precio = $array['precio'];
+        
         $pedido = new Pedido();
         $pedido->mesaId = $mesaId;
         $pedido->tiempoEstimado = $tiempoEstimado;
-        $pedido->numeroDePedido = $numeroDePedido;
         $pedido->fecha = $fecha;
         $pedido->precio = $precio;
-        $pedido->estado = 'pendiente';
-    
-        $pedido->crearPedido();
-    
-    
-        $payload = json_encode(array("mensaje" => "Producto creado con exito"));
+        
+        // $pedido->estado = 'pendiente';
 
+        $pedido->crearPedido();
+
+        $productos = $array['productos'];
+
+        foreach($productos as $idProducto){
+
+            $productoPedido = new ProductosPedidos();
+            $productoPedido->numeroDePedido = $pedido->numeroDePedido;
+            $productoPedido->productoId = $idProducto;
+            $productoPedido->crearProductosPedidos();
+            // var_dump($productoPedido->productoId); 
+        }
+    
+        $payload = json_encode(array("mensaje" => "Pedido creado con éxito"));
+    
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
+    
     
 
     public function TraerUno($request, $response, $args)
