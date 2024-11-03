@@ -2,7 +2,6 @@
 
 require_once './models/Pedido.php';
 require_once './interfaces/IApiUsable.php';
-
 require_once './models/ProductosPedidos.php';
 
 class PedidoController implements IApiUsable
@@ -46,24 +45,52 @@ class PedidoController implements IApiUsable
     }
     
     
-
     public function TraerUno($request, $response, $args)
     {
         $id = $args['id'];
-        $producto = Pedido::obtenerPedido($id);
+        $pedido = Pedido::obtenerPedido($id);
         
-        $payload = json_encode($producto);
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
+        if (!$pedido) {
+            return $response->withStatus(404)->write(json_encode(['error' => 'Pedido no encontrado']));
+        }
+
+        $numeroDePedido = $pedido->numeroDePedido;
+        $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
+    
+        $payload = [
+            'pedido' => $pedido,
+            'productos' => $productos 
+        ];
+        
+        $response->getBody()->write(json_encode($payload));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+    
+
+public function TraerTodos($request, $response, $args)
+{
+
+    $pedidos = Pedido::obtenerTodos();
+
+    $pedidosConProductos = [];
+
+    foreach ($pedidos as $pedido) {
+        $numeroDePedido = $pedido->numeroDePedido;
+
+        $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
+
+        $pedidosConProductos[] = [
+            'pedido' => $pedido,
+            'productos' => $productos
+        ];
     }
 
-    public function TraerTodos($request, $response, $args)
-    {
-        $pedidos = Pedido::obtenerTodos();
 
-        $response->getBody()->write(json_encode($pedidos));
-        return $response->withHeader('Content-Type', 'application/json');
-    }
+    $response->getBody()->write(json_encode($pedidosConProductos));
+    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+}
+
+
     public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
