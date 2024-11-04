@@ -24,6 +24,10 @@ require_once './controllers/ProductoController.php';
 require_once './controllers/MesaController.php';
 require_once './controllers/PedidoController.php';
 
+
+require_once './middlewares/UsuarioMiddleware.php';
+
+
 // Load ENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
@@ -54,7 +58,12 @@ $app->addBodyParsingMiddleware();
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
-    $group->post('[/]', \UsuarioController::class . ':CargarUno');
+
+    //Si uso funcion static lo llamo de esta manera.
+    // $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(\CrearUsuarioRolMiddleware::class . ":CrearUsuarioMiddleware");
+    //Si en el MW uso __invoke lo llamo instanciando la clase directamente.
+    $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new CrearUsuarioRolMiddleware());
+    
     $group->put('/{id}', \UsuarioController::class . ':ModificarUno');
     $group->delete('/{id}', \UsuarioController::class . ':BorrarUno');
   });
