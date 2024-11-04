@@ -12,6 +12,7 @@ class PedidoController implements IApiUsable
         $array = json_decode($json, true);
 
         // $parametros = $request->getParsedBody();
+        $cliente = $array['cliente'];
         $mesaId = $array['mesaId'];
         $tiempoEstimado = $array['tiempoEstimado'];
         $fecha = date("Y-m-d");
@@ -22,6 +23,7 @@ class PedidoController implements IApiUsable
         $pedido->tiempoEstimado = $tiempoEstimado;
         $pedido->fecha = $fecha;
         $pedido->precio = $precio;
+        $pedido->cliente = $cliente; 
         
         // $pedido->estado = 'pendiente';
 
