@@ -26,6 +26,7 @@ require_once './controllers/PedidoController.php';
 
 
 require_once './middlewares/UsuarioMiddleware.php';
+// require_once './middlewares/ProductoMiddleware.php';
 
 
 // Load ENV

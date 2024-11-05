@@ -29,7 +29,7 @@ class Producto
     
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Producto');
     }
-    
+
 
     public static function obtenerProducto($nombre)
     {
@@ -53,6 +53,7 @@ class Producto
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Producto');
     }
+    
 
 
     public static function borrarProducto($id)
