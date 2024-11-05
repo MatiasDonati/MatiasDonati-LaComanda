@@ -27,6 +27,7 @@ require_once './controllers/PedidoController.php';
 
 require_once './middlewares/UsuarioMiddleware.php';
 require_once './middlewares/PedidosMiddleware.php';
+require_once './middlewares/ModificarPedidosMiddleware.php';
 // require_once './middlewares/ProductoMiddleware.php';
 
 
@@ -68,7 +69,7 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new CrearUsuarioRolMiddleware());
     
     $group->put('/{id}', \UsuarioController::class . ':ModificarUno');
-    $group->delete('/{id}', \UsuarioController::class . ':BorrarUno');
+    $group->delete('/{id}', \UsuarioController::class . ':BorrarUno')->add(new CrearUsuarioRolMiddleware());
   });
 
   $app->group('/productos', function (RouteCollectorProxy $group) {
@@ -92,7 +93,7 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
     $group->get('/{id}', \PedidoController::class . ':TraerUno');
     $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware());
-    $group->put('/{id}', \PedidoController::class . ':ModificarUno');
+    $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware());
     $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
   });
 
