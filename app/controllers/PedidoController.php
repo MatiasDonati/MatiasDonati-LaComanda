@@ -95,9 +95,27 @@ public function TraerTodos($request, $response, $args)
 
     public function ModificarUno($request, $response, $args)
     {
+
+        // VER ACA QUE ESTOY TENIENDO ALGUN QUILOMBO
+        // VER ACA QUE ESTOY TENIENDO ALGUN QUILOMBO
+        // VER ACA QUE ESTOY TENIENDO ALGUN QUILOMBO
+
+        // VER SI NO ES ALGO QUE CAMBIO EN LA BASE DE DATOS
+        // VER SI NO ES ALGO QUE CAMBIO EN LA BASE DE DATOS
+        // VER SI NO ES ALGO QUE CAMBIO EN LA BASE DE DATOS
+
+
+        // VER SI POR JSON RAW O getParsedBody();
+
         $parametros = $request->getParsedBody();
         $id = $args['id'];
-        $estado = $parametros['estado'];
+
+        $json = file_get_contents('php://input');
+        $array = json_decode($json, true);
+
+        echo $array['pepe'];
+        $estado = $array['estado'];
+        echo"hola";
     
         $resultado = Pedido::modificarPedido($id, $estado);
     
