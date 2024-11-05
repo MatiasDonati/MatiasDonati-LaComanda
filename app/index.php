@@ -26,7 +26,9 @@ require_once './controllers/PedidoController.php';
 
 
 require_once './middlewares/UsuarioMiddleware.php';
+require_once './middlewares/PedidosMiddleware.php';
 // require_once './middlewares/ProductoMiddleware.php';
+
 
 
 // Load ENV
@@ -89,7 +91,7 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
   $app->group('/pedidos', function (RouteCollectorProxy $group) {
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
     $group->get('/{id}', \PedidoController::class . ':TraerUno');
-    $group->post('[/]', \PedidoController::class . ':CargarUno');
+    $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware());
     $group->put('/{id}', \PedidoController::class . ':ModificarUno');
     $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
   });
