@@ -11,7 +11,6 @@ class PedidoController implements IApiUsable
         $json = file_get_contents('php://input');
         $array = json_decode($json, true);
 
-        // $parametros = $request->getParsedBody();
         $cliente = $array['cliente'];
         $mesaId = $array['mesaId'];
         $tiempoEstimado = $array['tiempoEstimado'];
@@ -24,20 +23,22 @@ class PedidoController implements IApiUsable
         $pedido->fecha = $fecha;
         $pedido->precio = $precio;
         $pedido->cliente = $cliente; 
-        
-        // $pedido->estado = 'pendiente';
 
         $pedido->crearPedido();
 
         $productos = $array['productos'];
-
-        foreach($productos as $idProducto){
+        foreach($productos as $productoNombre){
 
             $productoPedido = new ProductosPedidos();
             $productoPedido->numeroDePedido = $pedido->numeroDePedido;
+            $productoDetalle = Producto::obtenerProducto($productoNombre);
+            $idProducto = $productoDetalle->id;
             $productoPedido->productoId = $idProducto;
+
+            $empleadoACargo = ProductosPedidos::ObtenerUsuariosPorTipoDePedido($productoDetalle->tipo);
+            $productoPedido->empleadoACargo = $empleadoACargo->id;
+            $productoPedido->precio = $productoDetalle->precio;
             $productoPedido->crearProductosPedidos();
-            // var_dump($productoPedido->productoId); 
         }
     
         $payload = json_encode(array("mensaje" => "Pedido creado con éxito"));

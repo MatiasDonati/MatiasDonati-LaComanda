@@ -7,6 +7,7 @@ class Usuario
     public $usuario;
     public $clave;
     public $rol;
+    public $fechaBaja;
 
     public function crearUsuario()
     {
