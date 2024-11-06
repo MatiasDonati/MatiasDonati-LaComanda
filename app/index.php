@@ -28,6 +28,7 @@ require_once './controllers/PedidoController.php';
 require_once './middlewares/UsuarioMiddleware.php';
 require_once './middlewares/PedidosMiddleware.php';
 require_once './middlewares/ModificarPedidosMiddleware.php';
+require_once './middlewares/MesaMiddleware.php';
 // require_once './middlewares/ProductoMiddleware.php';
 
 
@@ -50,7 +51,7 @@ $app->setBasePath('/Programacion/LaComanda/app');
 // php -S localhost:666 -t app
 // ```
 
-// - Abrir desde http://localhost:666/ en POSTAN !
+// - Abrir desde http://localhost:666/ en POSTMAN !
 
 // Add error middleware
 $app->addErrorMiddleware(true, true, true);
@@ -66,10 +67,10 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
     //Si uso funcion static lo llamo de esta manera.
     // $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(\CrearUsuarioRolMiddleware::class . ":CrearUsuarioMiddleware");
     //Si en el MW uso __invoke lo llamo instanciando la clase directamente.
-    $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new CrearUsuarioRolMiddleware());
+    $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new UsuarioRolMiddleware());
     
     $group->put('/{id}', \UsuarioController::class . ':ModificarUno');
-    $group->delete('/{id}', \UsuarioController::class . ':BorrarUno')->add(new CrearUsuarioRolMiddleware());
+    $group->delete('/{id}', \UsuarioController::class . ':BorrarUno')->add(new UsuarioRolMiddleware());
   });
 
   $app->group('/productos', function (RouteCollectorProxy $group) {
@@ -83,7 +84,7 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
   $app->group('/mesas', function (RouteCollectorProxy $group) {
     $group->get('[/]', \MesaController::class . ':TraerTodos');
     $group->get('/{id}', \MesaController::class . ':TraerUno');
-    $group->post('[/]', \MesaController::class . ':CargarUno');
+    $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware());
     $group->put('/{id}', \MesaController::class . ':ModificarUno');
     $group->delete('/{id}', \MesaController::class . ':BorrarUno');
   });
