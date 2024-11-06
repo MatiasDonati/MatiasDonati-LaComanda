@@ -29,7 +29,10 @@ require_once './middlewares/UsuarioMiddleware.php';
 require_once './middlewares/PedidosMiddleware.php';
 require_once './middlewares/ModificarPedidosMiddleware.php';
 require_once './middlewares/MesaMiddleware.php';
+require_once './middlewares/AuthMiddleware.php';
 // require_once './middlewares/ProductoMiddleware.php';
+
+require_once './utils/AutentificadorJWT.php';
 
 
 
@@ -73,37 +76,69 @@ $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->delete('/{id}', \UsuarioController::class . ':BorrarUno')->add(new UsuarioRolMiddleware());
   });
 
-  $app->group('/productos', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \ProductoController::class . ':TraerTodos');
-    $group->get('/{nombre}', \ProductoController::class . ':TraerUno');
-    $group->post('[/]', \ProductoController::class . ':CargarUno');
-    $group->put('/{id}', \ProductoController::class . ':ModificarUno');
-    $group->delete('/{id}', \ProductoController::class . ':BorrarUno');
-  });
+$app->group('/productos', function (RouteCollectorProxy $group) {
+  $group->get('[/]', \ProductoController::class . ':TraerTodos');
+  $group->get('/{nombre}', \ProductoController::class . ':TraerUno');
+  $group->post('[/]', \ProductoController::class . ':CargarUno');
+  $group->put('/{id}', \ProductoController::class . ':ModificarUno');
+  $group->delete('/{id}', \ProductoController::class . ':BorrarUno');
+});
 
-  $app->group('/mesas', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \MesaController::class . ':TraerTodos');
-    $group->get('/{id}', \MesaController::class . ':TraerUno');
-    $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware());
-    $group->put('/{id}', \MesaController::class . ':ModificarUno');
-    $group->delete('/{id}', \MesaController::class . ':BorrarUno');
-  });
+$app->group('/mesas', function (RouteCollectorProxy $group) {
+  $group->get('[/]', \MesaController::class . ':TraerTodos');
+  $group->get('/{id}', \MesaController::class . ':TraerUno');
+  $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware());
+  $group->put('/{id}', \MesaController::class . ':ModificarUno');
+  $group->delete('/{id}', \MesaController::class . ':BorrarUno');
+});
 
-
-  $app->group('/pedidos', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \PedidoController::class . ':TraerTodos');
-    $group->get('/{id}', \PedidoController::class . ':TraerUno');
-    $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware());
-    $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware());
-    $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
-  });
-
-
+$app->group('/pedidos', function (RouteCollectorProxy $group) {
+  $group->get('[/]', \PedidoController::class . ':TraerTodos');
+  $group->get('/{id}', \PedidoController::class . ':TraerUno');
+  $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware());
+  $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware());
+  $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
+});
 
 $app->get('[/]', function (Request $request, Response $response) {    
     $payload = json_encode(array("mensaje" => "Bienvenido a La Comanda!"));
     $response->getBody()->write($payload);
     return $response->withHeader('Content-Type', 'application/json');
 });
+
+// JVT - Token
+// JVT - Token
+// JVT - Token
+// JVT - Token
+// JVT - Token
+// JVT - Token
+
+$app->post('/crearToken', function (Request $request, Response $response) {
+  $datos = $request->getParsedBody();
+  $token = AutentificadorJWT::CrearToken($datos);
+  $response->getBody()->write(json_encode(['token' => $token]));
+  return $response->withHeader('Content-Type', 'application/json');
+});
+$app->post('/verificarToken', function (Request $request, Response $response) {
+  $params = $request->getParsedBody();
+  try {
+      AutentificadorJWT::VerificarToken($params['token']);
+      $response->getBody()->write(json_encode(['mensaje' => 'Token válido']));
+  } catch (Exception $e) {
+      $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+  }
+  return $response->withHeader('Content-Type', 'application/json');
+});
+$app->post('/obtenerDatos', function (Request $request, Response $response) {
+  $params = $request->getParsedBody();
+  try {
+      $data = AutentificadorJWT::ObtenerData($params['token']);
+      $response->getBody()->write(json_encode(['data' => $data]));
+  } catch (Exception $e) {
+      $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+  }
+  return $response->withHeader('Content-Type', 'application/json');
+});
+
 
 $app->run();
