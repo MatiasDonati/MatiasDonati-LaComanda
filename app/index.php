@@ -35,7 +35,6 @@ require_once './middlewares/AuthMiddleware.php';
 require_once './utils/AutentificadorJWT.php';
 
 
-
 // Load ENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
@@ -94,7 +93,7 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->get('[/]', \PedidoController::class . ':TraerTodos');
-  $group->get('/{id}', \PedidoController::class . ':TraerUno');
+  $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddleware());
   $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware());
   $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware());
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
@@ -106,12 +105,9 @@ $app->get('[/]', function (Request $request, Response $response) {
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-// JVT - Token
-// JVT - Token
-// JVT - Token
-// JVT - Token
-// JVT - Token
-// JVT - Token
+// JVT - Token // JVT - Token // JVT - Token
+// JVT - Token // JVT - Token // JVT - Token
+// JVT - Token // JVT - Token // JVT - Token
 
 $app->post('/crearToken', function (Request $request, Response $response) {
   $datos = $request->getParsedBody();
