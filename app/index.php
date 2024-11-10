@@ -10,10 +10,6 @@ use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\Routing\RouteContext;
 
-// Ver esto para MW.
-// use Slim\Psr7\Response;
-
-
 require __DIR__ . '/../vendor/autoload.php';
 
 require_once './db/AccesoDatos.php';
@@ -30,7 +26,6 @@ require_once './middlewares/PedidosMiddleware.php';
 require_once './middlewares/ModificarPedidosMiddleware.php';
 require_once './middlewares/MesaMiddleware.php';
 require_once './middlewares/AuthMiddleware.php';
-// require_once './middlewares/ProductoMiddleware.php';
 
 require_once './utils/AutentificadorJWT.php';
 
@@ -42,18 +37,8 @@ $dotenv->safeLoad();
 // Instantiate App
 $app = AppFactory::create();
 
-// Set base path 
-// Esto por si lo abro directamente con Xampp , en postan poner "http://localhost//Programacion/LaComanda/app" , la misma ruta.
+// En POSTMAN poner "http://localhost//Programacion/LaComanda/app" , la misma ruta.
 $app->setBasePath('/Programacion/LaComanda/app');
-
-//Si es por comando
-// ```sh
-// cd C:\<ruta-del-repo-clonado>
-// composer update
-// php -S localhost:666 -t app
-// ```
-
-// - Abrir desde http://localhost:666/ en POSTMAN !
 
 // Add error middleware
 $app->addErrorMiddleware(true, true, true);
@@ -65,14 +50,9 @@ $app->addBodyParsingMiddleware();
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
-
-    //Si uso funcion static lo llamo de esta manera.
-    // $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(\CrearUsuarioRolMiddleware::class . ":CrearUsuarioMiddleware");
-    //Si en el MW uso __invoke lo llamo instanciando la clase directamente.
-    $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new UsuarioRolMiddleware());
-    
+    $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new RolMiddleware(['socio']));
     $group->put('/{id}', \UsuarioController::class . ':ModificarUno');
-    $group->delete('/{id}', \UsuarioController::class . ':BorrarUno')->add(new UsuarioRolMiddleware());
+    $group->delete('/{id}', \UsuarioController::class . ':BorrarUno')->add(new RolMiddleware(['socio']));
   });
 
 $app->group('/productos', function (RouteCollectorProxy $group) {
@@ -84,7 +64,7 @@ $app->group('/productos', function (RouteCollectorProxy $group) {
 });
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
-  $group->get('[/]', \MesaController::class . ':TraerTodos');
+  $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
   $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware());
   $group->put('/{id}', \MesaController::class . ':ModificarUno');
@@ -94,7 +74,7 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->get('[/]', \PedidoController::class . ':TraerTodos');
   $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddleware());
-  $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware());
+  $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware())->add(new RolMiddleware(['mozo']));
   $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware());
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
 });
@@ -105,8 +85,9 @@ $app->get('[/]', function (Request $request, Response $response) {
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-// JVT - Token // JVT - Token // JVT - Token
-// JVT - Token // JVT - Token // JVT - Token
+
+
+
 // JVT - Token // JVT - Token // JVT - Token
 
 $app->post('/crearToken', function (Request $request, Response $response) {
@@ -115,6 +96,7 @@ $app->post('/crearToken', function (Request $request, Response $response) {
   $response->getBody()->write(json_encode(['token' => $token]));
   return $response->withHeader('Content-Type', 'application/json');
 });
+
 $app->post('/verificarToken', function (Request $request, Response $response) {
   $params = $request->getParsedBody();
   try {
@@ -125,6 +107,7 @@ $app->post('/verificarToken', function (Request $request, Response $response) {
   }
   return $response->withHeader('Content-Type', 'application/json');
 });
+
 $app->post('/obtenerDatos', function (Request $request, Response $response) {
   $params = $request->getParsedBody();
   try {

@@ -66,36 +66,43 @@ class UsuarioRolMiddleware
     }
 }
 
+class RolMiddleware
+{
+    private $rolesPermitidos;
 
-// // Con funcion statica nomarl
-// class CrearUsuarioRolMiddleware{
+    public function __construct(array $rolesPermitidos)
+    {
+        $this->rolesPermitidos = $rolesPermitidos;
+    }
 
-//     public static function CrearUsuarioMiddleware($request, $handler){
-        
-//         echo "Entro al MW\n";
+    public function __invoke(Request $request, RequestHandler $handler): Response
+    {
+        $response = new Response();
 
-//         $params = $request->getParsedBody();
+        $authHeader = $request->getHeader('token');
+        if (!$authHeader || !isset($authHeader[0])) {
+            $payload = json_encode(["mensaje" => "Token no proporcionado."]);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
 
+        $token = $authHeader[0];
 
-//         if(!isset($params['usuario'],$params['clave'], $params['rol']) || empty($params['usuario'])|| empty($params['clave'])|| empty($params['rol'])){
-            
+        try {
+            AutentificadorJWT::VerificarToken($token);
+            $data = AutentificadorJWT::ObtenerData($token);
 
-//             $response = new Response();
-
-//             $response->getBody()->write('{error: "No no no ..  datos incorrectos"}');
-//             return $response
-//             ->withHeader('Content-Type', 'application/json')
-//             ->withStatus(400);
-
-//         }
-
-//         $response = $handler->handle($request);
-
-//         echo "Salgo del MW\n";
-
-//         return $response;
-//     }
-
-// }
-
-
+            if (in_array($data->rol, $this->rolesPermitidos)) {
+                return $handler->handle($request);
+            } else {
+                $payload = json_encode(["mensaje" => "Acceso denegado. No tienes el rol necesario para realizar esta acción."]);
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+            }
+        } catch (Exception $e) {
+            $payload = json_encode(["mensaje" => "Token inválido o expirado.", "error" => $e->getMessage()]);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+    }
+}
