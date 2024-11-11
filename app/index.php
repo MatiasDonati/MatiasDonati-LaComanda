@@ -67,7 +67,7 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
   $group->get('/csv', \MesaController::class . ':DescargarCsv')->add(new RolMiddleware(['socio']));
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
-  $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware());
+  $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware())->add(new RolMiddleware(['socio']));
   $group->put('/{id}', \MesaController::class . ':ModificarUno');
   $group->delete('/{id}', \MesaController::class . ':BorrarUno');
   

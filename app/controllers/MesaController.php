@@ -8,7 +8,7 @@ class MesaController extends Mesa implements IApiUsable
     {
         $parametros = $request->getParsedBody();
         $estado = $parametros['estado'];
-        $codigoDeIdentificacion = $parametros['codigoDeIdentificacion'];
+        $codigoDeIdentificacion = Mesa::generarCodigoUnico();
         $mesa = new Mesa();
         $mesa->estado = $estado;
         $mesa->codigoDeIdentificacion = $codigoDeIdentificacion;

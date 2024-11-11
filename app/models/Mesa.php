@@ -106,24 +106,32 @@ class Mesa
     
         return $arrayMesas;
     }
-    
-
-    // UTILIZARLO AL CREAR UNA MESA !!! ME FALTO ESO
-    // UTILIZARLO AL CREAR UNA MESA !!! ME FALTO ESO
-    // UTILIZARLO AL CREAR UNA MESA !!! ME FALTO ESO
-    // UTILIZARLO AL CREAR UNA MESA !!! ME FALTO ESO
 
     public static function generarCodigoUnico()
     {
         $caracteres = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $codigo = '';
+        $esUnico = false;
+
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
         
-        for ($i = 0; $i < 5; $i++) {
-            $codigo .= $caracteres[random_int(0, strlen($caracteres) - 1)];
+        while (!$esUnico) {
+            $codigo = '';
+            for ($i = 0; $i < 5; $i++) {
+                $codigo .= $caracteres[random_int(0, strlen($caracteres) - 1)];
+            }
+
+            $consulta = $objAccesoDatos->prepararConsulta("SELECT COUNT(*) FROM mesas WHERE codigoDeIdentificacion = :codigo");
+            $consulta->bindValue(':codigo', $codigo, PDO::PARAM_STR);
+            $consulta->execute();
+            
+            $resultado = $consulta->fetchColumn();
+            $esUnico = ($resultado == 0) ? true : false;
         }
-        
+
         return $codigo;
     }
+
 
     public static function descargaDbCsv($rutaArchivo)
     {
@@ -157,7 +165,4 @@ class Mesa
         return true;
     }
     
-    
-
-
 }
