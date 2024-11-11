@@ -1,10 +1,13 @@
 <?php
 
+include_once(__DIR__ . '/../utils/Archivos.php');
+
 class Mesa
 {
     public $id;
     public $codigoDeIdentificacion;
     public $estado;
+    public $fechaBaja;
 
     public function crearMesa()
     {
@@ -55,4 +58,106 @@ class Mesa
         $consulta->bindValue(':fechaBaja', $fecha->format('Y-m-d H:i:s'));
         $consulta->execute();
     }
+
+    public static function subirMesaCsv()
+	{
+		$archivo = Archivo::GuardarArchivo("db/subido/", "mesas", 'csv', '.csv');
+
+		if ($archivo != "N/A") {
+
+			$arrayMesas = self::CsvAMesa($archivo);
+			foreach ($arrayMesas as $mesa) {
+				$mesa->crearMesa();
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+    public static function CsvAMesa($rutaArchivo)
+    {
+        $arrayMesas = [];
+        $encabezado = true;
+    
+        if (($handle = fopen($rutaArchivo, "r")) !== false) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+                if ($encabezado) {
+                    if (strtolower($data[0]) == "id") {
+                        $encabezado = false;
+                        continue;
+                    } else {
+                        $encabezado = false;
+                    }
+                }
+    
+                $mesa = new Mesa();
+                $mesa->id = $data[0];
+                $mesa->estado = $data[1];
+                $mesa->codigoDeIdentificacion = Mesa::generarCodigoUnico();
+    
+                $arrayMesas[] = $mesa;
+            }
+            fclose($handle);
+        } else {
+            echo "No se pudo abrir el archivo CSV.";
+        }
+    
+        return $arrayMesas;
+    }
+    
+
+    // UTILIZARLO AL CREAR UNA MESA !!! ME FALTO ESO
+    // UTILIZARLO AL CREAR UNA MESA !!! ME FALTO ESO
+    // UTILIZARLO AL CREAR UNA MESA !!! ME FALTO ESO
+    // UTILIZARLO AL CREAR UNA MESA !!! ME FALTO ESO
+
+    public static function generarCodigoUnico()
+    {
+        $caracteres = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        $codigo = '';
+        
+        for ($i = 0; $i < 5; $i++) {
+            $codigo .= $caracteres[random_int(0, strlen($caracteres) - 1)];
+        }
+        
+        return $codigo;
+    }
+
+    public static function descargaDbCsv($rutaArchivo)
+    {
+        $mesas = self::obtenerTodos();
+        
+        if (empty($mesas)) {
+            return false;
+        }
+    
+        $directorio = dirname($rutaArchivo);
+        
+        if (!is_dir($directorio)) {
+            mkdir($directorio, 0777, true);
+        }
+    
+        $archivo = fopen($rutaArchivo, 'w');
+        
+        fputcsv($archivo, ['id', 'estado', 'fechaBaja', 'codigoDeIdentificacion']);
+    
+        foreach ($mesas as $mesa) {
+            fputcsv($archivo, [
+                (int)$mesa->id, 
+                $mesa->estado, 
+                $mesa->fechaBaja, 
+                $mesa->codigoDeIdentificacion
+            ]);
+        }
+    
+        fclose($archivo);
+    
+        return true;
+    }
+    
+    
+
+
 }

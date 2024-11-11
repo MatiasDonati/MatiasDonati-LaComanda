@@ -64,4 +64,43 @@ class MesaController extends Mesa implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
+
+    public static function SubirCsv($request, $response)
+    {
+      if (Mesa::SubirMesaCsv()){
+        $payload = json_encode(array("mensaje" => "Los datos del archivo se subieron correctamente!"));
+      }else{
+        $payload = json_encode(array("mensaje" => "Hubo un problema al subir el archivo."));
+
+      }
+
+      $response->getBody()->write($payload);
+      return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public static function DescargarCsv($request, $response)
+    {
+      $request->getParsedBody();
+
+      Mesa::DescargaDbCsv("db/descargas/mesas.csv");
+      $rutaCsv = "db/mesas.csv";
+
+      if (file_exists($rutaCsv) && is_readable($rutaCsv)) {
+          $response = $response->withHeader('Content-Type', 'application/octet-stream')
+                               ->withHeader('Content-Disposition', 'attachment; filename="' . basename($rutaCsv) . '"')
+                               ->withHeader('Expires', '0')
+                               ->withHeader('Cache-Control', 'must-revalidate')
+                               ->withHeader('Pragma', 'public')
+                               ->withHeader('Content-Length', filesize($rutaCsv));
+
+          readfile($rutaCsv);
+          return $response;
+
+      } else {
+        $payload = json_encode(array("mensaje" => "Hubo un problema al descargar el archivo CSV."));
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+      }
+    
+    }
 }
