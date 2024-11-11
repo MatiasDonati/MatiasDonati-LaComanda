@@ -20,7 +20,6 @@ require_once './controllers/ProductoController.php';
 require_once './controllers/MesaController.php';
 require_once './controllers/PedidoController.php';
 
-
 require_once './middlewares/UsuarioMiddleware.php';
 require_once './middlewares/PedidosMiddleware.php';
 require_once './middlewares/ModificarPedidosMiddleware.php';
@@ -65,9 +64,7 @@ $app->group('/productos', function (RouteCollectorProxy $group) {
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
   $group->post('/csv', \MesaController::class . ':SubirCsv')->add(new RolMiddleware(['socio']));
-  $group->get('/csv', \MesaController::class . ':DescargarCsv')
-  // ->add(new RolMiddleware(['socio']))
-  ;
+  $group->get('/csv', \MesaController::class . ':DescargarCsv')->add(new RolMiddleware(['socio']));
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
   $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware());
