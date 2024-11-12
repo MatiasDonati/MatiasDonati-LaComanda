@@ -12,13 +12,16 @@ class Mesa
     public function crearMesa()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesas (codigoDeIdentificacion, estado) VALUES (:codigoDeIdentificacion, :estado)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesas (codigoDeIdentificacion, estado, fechaBaja) VALUES (:codigoDeIdentificacion, :estado, :fechaBaja)");
         $consulta->bindValue(':codigoDeIdentificacion', $this->codigoDeIdentificacion, PDO::PARAM_STR);
         $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
+        $consulta->bindValue(':fechaBaja', $this->fechaBaja, PDO::PARAM_STR);
+    
         $consulta->execute();
-
+    
         return $objAccesoDatos->obtenerUltimoId();
     }
+    
 
     public static function obtenerTodos()
     {
@@ -95,6 +98,7 @@ class Mesa
                 $mesa = new Mesa();
                 $mesa->id = $data[0];
                 $mesa->estado = $data[1];
+                $mesa->fechaBaja = ($data[2] === 'NULL' || empty($data[2])) ? null : $data[2];
                 $mesa->codigoDeIdentificacion = Mesa::generarCodigoUnico();
     
                 $arrayMesas[] = $mesa;

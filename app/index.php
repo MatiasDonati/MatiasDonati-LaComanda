@@ -63,15 +63,15 @@ $app->group('/productos', function (RouteCollectorProxy $group) {
 });
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
-  $group->post('/csv', \MesaController::class . ':SubirCsv')->add(new RolMiddleware(['socio']));
+  $group->post('/csv', \MesaController::class . ':SubirCsv')
+  // ->add(new RolMiddleware(['socio']))
+  ;
   $group->get('/csv', \MesaController::class . ':DescargarCsv')->add(new RolMiddleware(['socio']));
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
   $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware())->add(new RolMiddleware(['socio']));
   $group->put('/{id}', \MesaController::class . ':ModificarUno')->add(new RolMiddleware(['mozo']));
-  $group->delete('/{id}', \MesaController::class . ':BorrarUno');
-  
-
+  $group->delete('/{id}', \MesaController::class . ':BorrarUno')->add(new RolMiddleware(['socio']));
 });
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
