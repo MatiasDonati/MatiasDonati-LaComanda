@@ -27,6 +27,11 @@ class Archivo
         
 	}
 
+	// Activar imagen de mesa ! 
+	// Activar imagen de mesa ! 
+	// Activar imagen de mesa ! 
+	// Activar imagen de mesa ! 
+
 	public static function subirImagen($origen, $destino, $archivo)
 	{
 		if (!is_dir($destino))

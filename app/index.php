@@ -78,7 +78,7 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->get('[/]', \PedidoController::class . ':TraerTodos');
   $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddleware());
   $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware())->add(new RolMiddleware(['mozo']));
-  $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware());
+  $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware())->add(new RolMiddleware(['mozo']));
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
 });
 
