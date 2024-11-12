@@ -133,7 +133,7 @@ class Mesa
     }
 
 
-    public static function descargaDbCsv($rutaArchivo)
+    public static function DescargaArchivoCsv($rutaArchivo)
     {
         $mesas = self::obtenerTodos();
         

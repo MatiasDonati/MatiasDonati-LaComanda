@@ -9,7 +9,7 @@ class MesaMiddleware
     public function __invoke(Request $request, RequestHandler $handler): Response
     {   
         
-        echo "Middleware de Mesa." . PHP_EOL;
+        echo "Middleware de Mesa. Para dar de alta una mesa debes ser Socio." . PHP_EOL;
         return $handler->handle($request);
     }
 

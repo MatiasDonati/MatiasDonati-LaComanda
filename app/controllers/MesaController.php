@@ -7,7 +7,7 @@ class MesaController extends Mesa implements IApiUsable
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-        $estado = $parametros['estado'];
+        $estado = 'cerrada';
         $codigoDeIdentificacion = Mesa::generarCodigoUnico();
         $mesa = new Mesa();
         $mesa->estado = $estado;
@@ -78,12 +78,13 @@ class MesaController extends Mesa implements IApiUsable
       return $response->withHeader('Content-Type', 'application/json');
     }
 
+    
     public static function DescargarCsv($request, $response)
     {
       $request->getParsedBody();
 
-      Mesa::DescargaDbCsv("db/descargas/mesas.csv");
-      $rutaCsv = "db/mesas.csv";
+      Mesa::DescargaArchivoCsv("db/descargas/mesas.csv");
+      $rutaCsv = "db/descargas/mesas.csv";
 
       if (file_exists($rutaCsv) && is_readable($rutaCsv)) {
           $response = $response->withHeader('Content-Type', 'application/octet-stream')
@@ -101,6 +102,5 @@ class MesaController extends Mesa implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
       }
-    
     }
 }

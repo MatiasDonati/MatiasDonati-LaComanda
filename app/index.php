@@ -68,7 +68,7 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
   $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware())->add(new RolMiddleware(['socio']));
-  $group->put('/{id}', \MesaController::class . ':ModificarUno');
+  $group->put('/{id}', \MesaController::class . ':ModificarUno')->add(new RolMiddleware(['mozo']));
   $group->delete('/{id}', \MesaController::class . ':BorrarUno');
   
 
