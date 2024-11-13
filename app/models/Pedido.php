@@ -10,8 +10,8 @@ class Pedido
     public $foto;
     public $precio;
     public $fecha;
-    public $tiempoFinal = null; // Inicializado en null
-    public $cliente; // Recibido por parámetro
+    public $tiempoFinal = null;
+    public $cliente;
 
     public function crearPedido()
     {

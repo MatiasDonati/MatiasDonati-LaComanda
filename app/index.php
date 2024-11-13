@@ -15,16 +15,24 @@ require __DIR__ . '/../vendor/autoload.php';
 require_once './db/AccesoDatos.php';
 // require_once './middlewares/Logger.php';
 
+
+// CREATE PDF // Paquete de composer para PDF
+// CREATE PDF // Paquete de composer para PDF
+// CREATE PDF // Paquete de composer para PDF
+
+
 require_once './controllers/UsuarioController.php';
 require_once './controllers/ProductoController.php';
 require_once './controllers/MesaController.php';
 require_once './controllers/PedidoController.php';
+require_once './controllers/AuthController.php';
+require_once './controllers/ProductosPedidosController.php';
 
 require_once './middlewares/UsuarioMiddleware.php';
 require_once './middlewares/PedidosMiddleware.php';
 require_once './middlewares/ModificarPedidosMiddleware.php';
 require_once './middlewares/MesaMiddleware.php';
-require_once './middlewares/AuthMiddleware.php';
+// require_once './middlewares/AuthMiddleware.php';
 
 require_once './utils/AutentificadorJWT.php';
 
@@ -63,9 +71,7 @@ $app->group('/productos', function (RouteCollectorProxy $group) {
 });
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
-  $group->post('/csv', \MesaController::class . ':SubirCsv')
-  // ->add(new RolMiddleware(['socio']))
-  ;
+  $group->post('/csv', \MesaController::class . ':SubirCsv')->add(new RolMiddleware(['socio']));
   $group->get('/csv', \MesaController::class . ':DescargarCsv')->add(new RolMiddleware(['socio']));
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
@@ -82,43 +88,28 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
 });
 
+$app->get('/productosPedidos', \ProductosPedidosController::class . ':ObtenerTodos');
+
+$app->get('/productosPedidos/comida', \ProductosPedidosController::class . ':ObtenerProductosPorComida');
+$app->get('/productosPedidos/trago', \ProductosPedidosController::class . ':ObtenerProductosPorTrago');
+$app->get('/productosPedidos/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza');
+
+$app->get('/productosPedidos/{numeroDePedido}', \ProductosPedidosController::class . ':ObtenerPorPedido');
+$app->get('/productosPedidos/tipo/{tipoDeProducto}', \ProductosPedidosController::class . ':ObtenerProductosPorTipo');
+
+
+
 $app->get('[/]', function (Request $request, Response $response) {    
     $payload = json_encode(array("mensaje" => "Bienvenido a La Comanda!"));
     $response->getBody()->write($payload);
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-
-// JVT - Token // JVT - Token // JVT - Token
-
-$app->post('/crearToken', function (Request $request, Response $response) {
-  $datos = $request->getParsedBody();
-  $token = AutentificadorJWT::CrearToken($datos);
-  $response->getBody()->write(json_encode(['token' => $token]));
-  return $response->withHeader('Content-Type', 'application/json');
+// JVT - Token //  Crear - Verificar- Obtener datos
+$app->group('/auth', function (RouteCollectorProxy $group) {
+  $group->post('/crearToken', \AuthController::class . ':CrearToken');
+  $group->post('/verificarToken', \AuthController::class . ':VerificarToken');
+  $group->post('/obtenerDatos', \AuthController::class . ':ObtenerDatos');
 });
-
-$app->post('/verificarToken', function (Request $request, Response $response) {
-  $params = $request->getParsedBody();
-  try {
-      AutentificadorJWT::VerificarToken($params['token']);
-      $response->getBody()->write(json_encode(['mensaje' => 'Token válido']));
-  } catch (Exception $e) {
-      $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-  }
-  return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->post('/obtenerDatos', function (Request $request, Response $response) {
-  $params = $request->getParsedBody();
-  try {
-      $data = AutentificadorJWT::ObtenerData($params['token']);
-      $response->getBody()->write(json_encode(['data' => $data]));
-  } catch (Exception $e) {
-      $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-  }
-  return $response->withHeader('Content-Type', 'application/json');
-});
-
 
 $app->run();

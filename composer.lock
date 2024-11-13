@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fcd96a65c7147cd514b1a92212d41e6a",
+    "content-hash": "3f85cf80f64acbd56fdf1befef36864b",
     "packages": [
         {
             "name": "brick/math",
@@ -756,16 +756,16 @@
         },
         {
             "name": "illuminate/database",
-            "version": "11.x-dev",
+            "version": "v11.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "af371b7b34c55777e2b3f761c846e1b921aebb5d"
+                "reference": "9132b3f229b9e4bbc1c0346bca6108d1d54a58c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/af371b7b34c55777e2b3f761c846e1b921aebb5d",
-                "reference": "af371b7b34c55777e2b3f761c846e1b921aebb5d",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/9132b3f229b9e4bbc1c0346bca6108d1d54a58c0",
+                "reference": "9132b3f229b9e4bbc1c0346bca6108d1d54a58c0",
                 "shasum": ""
             },
             "require": {
@@ -821,7 +821,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-10-21T14:14:36+00:00"
+            "time": "2024-11-11T20:38:24+00:00"
         },
         {
             "name": "illuminate/macroable",
@@ -2908,12 +2908,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "illuminate/database": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
-    "platform-dev": {},
+    "platform": [],
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

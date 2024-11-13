@@ -76,5 +76,23 @@ class ProductosPedidos
     
         return $consulta->fetchObject('Usuario');
     }
+
+    public static function ObtenerProductosPorTipo($tipoDeProducto)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        
+        $consulta = $objAccesoDatos->prepararConsulta("
+            SELECT pp.*, p.tipo
+            FROM productosPedidos pp
+            JOIN productos p ON pp.productoId = p.id
+            WHERE p.tipo = :tipoDeProducto
+        ");
+        
+        $consulta->bindValue(':tipoDeProducto', $tipoDeProducto, PDO::PARAM_STR);
+        
+        $consulta->execute();
+
+        return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
     
 }

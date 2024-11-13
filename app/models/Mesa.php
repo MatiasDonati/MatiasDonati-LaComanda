@@ -136,7 +136,6 @@ class Mesa
         return $codigo;
     }
 
-
     public static function DescargaArchivoCsv($rutaArchivo)
     {
         $mesas = self::obtenerTodos();

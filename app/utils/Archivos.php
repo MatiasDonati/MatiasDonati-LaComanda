@@ -27,10 +27,10 @@ class Archivo
         
 	}
 
-	// Activar imagen de mesa ! 
-	// Activar imagen de mesa ! 
-	// Activar imagen de mesa ! 
-	// Activar imagen de mesa ! 
+	// Activar foto de mesa ! 
+	// Activar foto de mesa ! 
+	// Activar foto de mesa ! 
+	// Activar foto de mesa ! 
 
 	public static function subirImagen($origen, $destino, $archivo)
 	{
