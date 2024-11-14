@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 07-11-2024 a las 04:56:07
+-- Tiempo de generación: 14-11-2024 a las 03:46:42
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -39,16 +39,26 @@ CREATE TABLE `mesas` (
 --
 
 INSERT INTO `mesas` (`id`, `estado`, `fechaBaja`, `codigoDeIdentificacion`) VALUES
-(1, 'CambiandoElEstado', '2024-10-30 20:30:45', 'ab123'),
+(1, 'con gente morfando', '2024-10-30 20:30:45', 'ab123'),
 (2, 'con cliente comiendo', '2024-10-30 20:30:50', 'VUD0Q'),
-(3, 'con cliente pagando', NULL, 'A0W5S'),
+(3, 'con cliente pagando', '2024-11-12 11:40:01', 'A0W5S'),
 (4, 'cerrada', NULL, '69IJX'),
 (5, 'sarasa', NULL, 'N7S1L'),
 (6, 'sarasa', NULL, 'KRSGL'),
 (7, 'sarasa', NULL, 'BICV5'),
 (9, 'sarasa', NULL, '123123'),
 (10, 'cerrada', NULL, '777'),
-(12, 'cerrada', NULL, '999');
+(12, 'cerrada', NULL, '999'),
+(254, 'con gente morfando', NULL, 'PXUZK'),
+(255, 'con cliente comiendo', NULL, 'JK1zv'),
+(256, 'con cliente pagando', NULL, 'pUzXG'),
+(257, 'cerrada', NULL, 'rqIPA'),
+(258, 'sarasa', NULL, 'JlHsU'),
+(259, 'sarasa', NULL, '9dOOA'),
+(260, 'sarasa', NULL, 'Lg8hq'),
+(261, 'sarasa', NULL, 'so9Cl'),
+(262, 'cerrada', NULL, 'WbKWc'),
+(263, 'cerrada', NULL, 'qHuIM');
 
 -- --------------------------------------------------------
 
@@ -75,11 +85,11 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`id`, `mesaId`, `numeroDePedido`, `tiempoEstimado`, `estado`, `foto`, `precio`, `fecha`, `fechaBaja`, `total`, `cliente`) VALUES
-(1, '69IJX', 'MXG7F', NULL, 'Preparacione', NULL, 100.00, '2024-10-27 22:38:03', '2024-10-28 13:18:37', 0.00, 'Romina'),
-(2, 'A0W5S', '9QKF6', NULL, 'pendiente', NULL, 150.00, '2024-10-27 22:38:03', '2024-10-28 13:19:06', 0.00, 'Pepe'),
-(3, 'ab123', '9HCZN', NULL, 'Preparacione', NULL, 200.00, '2024-10-27 22:38:03', '2024-10-28 13:21:31', 0.00, 'Carlos'),
+(1, '69IJX', 'MXG7F', NULL, 'por pagar', NULL, 100.00, '2024-10-27 22:38:03', '2024-10-28 13:18:37', 0.00, 'Romina'),
+(2, 'A0W5S', '9QKF6', NULL, 'por pagare', NULL, 150.00, '2024-10-27 22:38:03', '2024-10-28 13:19:06', 0.00, 'Pepe'),
+(3, 'ab123', '9HCZN', NULL, 'Preparacione', NULL, 200.00, '2024-10-27 22:38:03', '2024-11-12 12:58:50', 0.00, 'Carlos'),
 (4, 'BICV5', '21O35', NULL, 'Preparacione', NULL, 2250.00, '2024-10-28 00:00:00', NULL, 0.00, 'Carlos'),
-(5, 'KRSGL', '65Y3B', NULL, 'pendiente', NULL, 2250.00, '2024-10-28 00:00:00', NULL, 0.00, 'Carlos'),
+(5, 'KRSGL', '65Y3B', NULL, 'por pagar', NULL, 2250.00, '2024-10-28 00:00:00', NULL, 0.00, 'Carlos'),
 (6, 'N7S1L', 'YN22W', NULL, 'pendiente', NULL, 5000.00, '2024-10-28 00:00:00', NULL, 0.00, 'Carlos'),
 (7, 'VUD0Q', 'YV5WT', NULL, 'pendiente', NULL, 5000.00, '2024-10-30 00:00:00', NULL, 0.00, 'Carlos'),
 (17, 'VUD0Q', 'YN22M', NULL, 'pendiente', NULL, 5000.00, '2024-10-30 00:00:00', NULL, 0.00, 'Carlos'),
@@ -142,7 +152,19 @@ INSERT INTO `pedidos` (`id`, `mesaId`, `numeroDePedido`, `tiempoEstimado`, `esta
 (95, 'KRSGL', 'mu6Jw', 12, 'pendiente', NULL, 20000.00, '2024-11-06 00:00:00', NULL, 0.00, 'Robenson'),
 (96, 'KRSGL', 'Oqy6m', 12, 'pendiente', NULL, 20000.00, '2024-11-06 00:00:00', NULL, 0.00, 'Robenson'),
 (97, 'KRSGL', 'FIJF0', 12, 'pendiente', NULL, 20000.00, '2024-11-06 00:00:00', NULL, 0.00, 'Robenson'),
-(98, 'KRSGL', '8dQOc', 12, 'pendiente', NULL, 20000.00, '2024-11-06 00:00:00', NULL, 0.00, 'Robenson');
+(98, 'KRSGL', '8dQOc', 12, 'pendiente', NULL, 20000.00, '2024-11-06 00:00:00', NULL, 0.00, 'Robenson'),
+(99, '777', '9ELCd', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(100, 'KRSGL', 'CLBl5', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(101, 'KRSGL', 'EFn34', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(102, 'KRSGL', 'e7Cds', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(103, 'KRSGL', 'GdJcx', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(104, 'KRSGL', 'xrdpY', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(105, 'KRSGL', 'hsogO', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(106, 'KRSGL', 'xzUIQ', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(107, 'KRSGL', 'rlPhs', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(108, 'KRSGL', 'gSnRw', 12, 'pendiente', NULL, 20000.00, '2024-11-11 00:00:00', NULL, 0.00, 'Robenson'),
+(109, '69IJX', 'eWBS9', 5, 'pendiente', NULL, 4000.00, '2024-11-13 00:00:00', NULL, 0.00, 'Gustavo'),
+(110, '69IJX', '2zmKA', 5, 'pendiente', NULL, 4000.00, '2024-11-14 00:00:00', NULL, 0.00, 'Pepe');
 
 -- --------------------------------------------------------
 
@@ -164,13 +186,16 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `tipo`, `precio`, `fechaBaja`, `numeroDePedido`) VALUES
-(1, 'pizza', 'comida', 23.00, '2024-10-28 01:41:57', 'BZN3A'),
+(1, 'pizza', 'comida', 23.00, '2024-10-28 01:41:57', 'zbd89'),
 (2, 'ravioles', 'comida', 1500.00, '2024-10-27 22:57:00', 'STIT7'),
 (3, 'vino', 'trago', 1250.00, NULL, 'BO6K1'),
 (4, 'fideos', 'comida', 5000.00, NULL, '7MA95'),
 (5, 'cerveza', 'cerveza', 5000.00, NULL, 'QYCH6'),
 (6, 'hamburguesa', 'comida', 5000.00, NULL, '62J62'),
-(7, 'empanada', 'comida', 5000.00, NULL, 'FP0O1');
+(7, 'campari', 'trago', 5000.00, NULL, 'FP0O1'),
+(8, 'fernet', 'trago', 5000.00, NULL, NULL),
+(9, 'fernet', 'trago', 5000.00, NULL, NULL),
+(10, 'fernet', 'trago', 5000.00, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -194,110 +219,132 @@ CREATE TABLE `productosPedidos` (
 --
 
 INSERT INTO `productosPedidos` (`id`, `numeroDePedido`, `productoId`, `precio`, `empleadoACargo`, `estado`, `timpoInicial`, `timpoFinal`) VALUES
-(1, 'MXG7F', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(2, 'MXG7F', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(3, 'dYTL6', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(4, 'dYTL6', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(5, 'dYTL6', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(6, 'dYTL6', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(7, 'dYTL6', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(8, 'dYTL6', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(9, 'dYTL6', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(10, 'Hp4Uo', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(11, 'Hp4Uo', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(12, 'Hp4Uo', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(13, 'Hp4Uo', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(15, 'aIhbo', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(16, 'aIhbo', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(17, 'aIhbo', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(18, 'aIhbo', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(19, 'aIhbo', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(20, 'aIhbo', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(21, 'aIhbo', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(22, 'bnuuQ', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(23, 'bnuuQ', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(24, 'bnuuQ', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(25, 'bnuuQ', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(26, 'bnuuQ', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(27, 'bnuuQ', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(28, 'bnuuQ', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(29, 'WlpVw', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(30, 'WlpVw', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(31, 'WlpVw', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(32, 'WlpVw', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(33, 'WlpVw', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(34, 'WlpVw', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(35, 'WlpVw', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(36, 'Sxlnh', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(37, 'Sxlnh', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(38, 'Sxlnh', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(39, 'Sxlnh', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(40, 'Sxlnh', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(41, 'Sxlnh', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(42, 'Sxlnh', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(43, 'bwDJR', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(44, 'bwDJR', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(45, 'bwDJR', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(46, 'bwDJR', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(47, 'bwDJR', 3, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(48, 'bwDJR', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(49, 'bwDJR', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(50, 'VVXpk', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(51, 'VVXpk', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(52, 'eAjaU', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(53, 'eAjaU', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(54, 'j43ck', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(55, 'j43ck', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(56, 'UiIs6', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(57, 'UiIs6', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(58, 'fDQyU', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(59, 'fDQyU', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(60, '5dGb4', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(61, '5dGb4', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(62, 'kozxc', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(63, 'kozxc', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(64, '2BfqX', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(65, '2BfqX', 4, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(66, 'ntaDz', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(67, 'ntaDz', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(68, 'GNwFJ', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(69, 'GNwFJ', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(70, '2CT4J', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(71, '2CT4J', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(72, 'mcWii', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(73, 'mcWii', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(74, 'R5S2d', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(75, 'R5S2d', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(76, 'orbgg', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(77, 'orbgg', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(78, 'ZKw6g', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(79, 'ZKw6g', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(80, '72DXX', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(81, '72DXX', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(82, 'eUqQQ', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(83, 'eUqQQ', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(84, 'r984G', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(85, 'r984G', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(86, 'g5RNp', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(87, 'g5RNp', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(88, 'oSMPt', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(89, 'oSMPt', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(90, 'vAF0k', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(91, 'vAF0k', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(92, '42ZPT', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(93, '42ZPT', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(94, 'BGfxp', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(95, 'BGfxp', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(96, 'aseyN', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(97, 'aseyN', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(98, 'mu6Jw', 1, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(99, 'mu6Jw', 2, NULL, NULL, 'preparacion', '2024-11-06 11:43:37', NULL),
-(100, 'Oqy6m', 1, 23.00, 14, 'preparacion', '2024-11-06 15:47:33', NULL),
-(101, 'Oqy6m', 2, 1500.00, 14, 'preparacion', '2024-11-06 15:47:33', NULL),
-(102, 'FIJF0', 3, 1250.00, 18, 'preparacion', '2024-11-06 15:48:20', NULL),
-(103, 'FIJF0', 4, 5000.00, 16, 'preparacion', '2024-11-06 15:48:20', NULL),
-(104, '8dQOc', 3, 1250.00, 3, 'preparacion', '2024-11-06 20:31:09', NULL),
-(105, '8dQOc', 4, 5000.00, 2, 'preparacion', '2024-11-06 20:31:09', NULL);
+(1, 'MXG7F', 1, NULL, NULL, 'pepe', '2024-11-06 11:43:37', NULL),
+(2, 'MXG7F', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(3, 'dYTL6', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(4, 'dYTL6', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(5, 'dYTL6', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(6, 'dYTL6', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(7, 'dYTL6', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(8, 'dYTL6', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(9, 'dYTL6', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(10, 'Hp4Uo', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(11, 'Hp4Uo', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(12, 'Hp4Uo', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(13, 'Hp4Uo', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(15, 'aIhbo', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(16, 'aIhbo', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(17, 'aIhbo', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(18, 'aIhbo', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(19, 'aIhbo', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(20, 'aIhbo', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(21, 'aIhbo', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(22, 'bnuuQ', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(23, 'bnuuQ', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(24, 'bnuuQ', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(25, 'bnuuQ', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(26, 'bnuuQ', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(27, 'bnuuQ', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(28, 'bnuuQ', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(29, 'WlpVw', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(30, 'WlpVw', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(31, 'WlpVw', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(32, 'WlpVw', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(33, 'WlpVw', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(34, 'WlpVw', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(35, 'WlpVw', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(36, 'Sxlnh', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(37, 'Sxlnh', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(38, 'Sxlnh', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(39, 'Sxlnh', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(40, 'Sxlnh', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(41, 'Sxlnh', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(42, 'Sxlnh', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(43, 'bwDJR', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(44, 'bwDJR', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(45, 'bwDJR', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(46, 'bwDJR', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(47, 'bwDJR', 3, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(48, 'bwDJR', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(49, 'bwDJR', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(50, 'VVXpk', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(51, 'VVXpk', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(52, 'eAjaU', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(53, 'eAjaU', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(54, 'j43ck', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(55, 'j43ck', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(56, 'UiIs6', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(57, 'UiIs6', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(58, 'fDQyU', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(59, 'fDQyU', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(60, '5dGb4', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(61, '5dGb4', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(62, 'kozxc', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(63, 'kozxc', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(64, '2BfqX', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(65, '2BfqX', 4, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(66, 'ntaDz', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(67, 'ntaDz', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(68, 'GNwFJ', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(69, 'GNwFJ', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(70, '2CT4J', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(71, '2CT4J', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(72, 'mcWii', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(73, 'mcWii', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(74, 'R5S2d', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(75, 'R5S2d', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(76, 'orbgg', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(77, 'orbgg', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(78, 'ZKw6g', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(79, 'ZKw6g', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(80, '72DXX', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(81, '72DXX', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(82, 'eUqQQ', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(83, 'eUqQQ', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(84, 'r984G', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(85, 'r984G', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(86, 'g5RNp', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(87, 'g5RNp', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(88, 'oSMPt', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(89, 'oSMPt', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(90, 'vAF0k', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(91, 'vAF0k', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(92, '42ZPT', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(93, '42ZPT', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(94, 'BGfxp', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(95, 'BGfxp', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(96, 'aseyN', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(97, 'aseyN', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(98, 'mu6Jw', 1, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(99, 'mu6Jw', 2, NULL, NULL, 'pendiente', '2024-11-06 11:43:37', NULL),
+(100, 'Oqy6m', 1, 23.00, 14, 'pendiente', '2024-11-06 15:47:33', NULL),
+(101, 'Oqy6m', 2, 1500.00, 14, 'pendiente', '2024-11-06 15:47:33', NULL),
+(102, 'FIJF0', 3, 1250.00, 18, 'pendiente', '2024-11-06 15:48:20', NULL),
+(103, 'FIJF0', 4, 5000.00, 16, 'pendiente', '2024-11-06 15:48:20', NULL),
+(104, '8dQOc', 3, 1250.00, 3, 'pendiente', '2024-11-06 20:31:09', NULL),
+(105, '8dQOc', 4, 5000.00, 2, 'pendiente', '2024-11-06 20:31:09', NULL),
+(106, '9ELCd', NULL, NULL, NULL, 'pendiente', '2024-11-11 00:14:56', NULL),
+(107, '9ELCd', NULL, NULL, NULL, 'pendiente', '2024-11-11 00:14:56', NULL),
+(108, 'CLBl5', 3, 1250.00, 5, 'pendiente', '2024-11-11 00:15:03', NULL),
+(109, 'CLBl5', 4, 5000.00, 12, 'pendiente', '2024-11-11 00:15:03', NULL),
+(110, 'EFn34', 3, 1250.00, 3, 'pendiente', '2024-11-11 00:18:02', NULL),
+(111, 'EFn34', 4, 5000.00, 16, 'pendiente', '2024-11-11 00:18:02', NULL),
+(112, 'e7Cds', 3, 1250.00, 5, 'pendiente', '2024-11-11 00:24:21', NULL),
+(113, 'e7Cds', 4, 5000.00, 16, 'pendiente', '2024-11-11 00:24:21', NULL),
+(114, 'GdJcx', 3, 1250.00, 21, 'pendiente', '2024-11-11 00:24:28', NULL),
+(115, 'GdJcx', 4, 5000.00, 8, 'pendiente', '2024-11-11 00:24:28', NULL),
+(116, 'xrdpY', 3, 1250.00, 21, 'pendiente', '2024-11-11 00:27:15', NULL),
+(117, 'xrdpY', 4, 5000.00, 14, 'pendiente', '2024-11-11 00:27:15', NULL),
+(118, 'hsogO', 3, 1250.00, 19, 'pendiente', '2024-11-11 00:27:57', NULL),
+(119, 'hsogO', 4, 5000.00, 2, 'pendiente', '2024-11-11 00:27:57', NULL),
+(120, 'xzUIQ', 3, 1250.00, 3, 'pendiente', '2024-11-11 00:28:33', NULL),
+(121, 'xzUIQ', 4, 5000.00, 15, 'pendiente', '2024-11-11 00:28:33', NULL),
+(122, 'rlPhs', 3, 1250.00, 9, 'pendiente', '2024-11-11 00:28:48', NULL),
+(123, 'rlPhs', 4, 5000.00, 7, 'pendiente', '2024-11-11 00:28:48', NULL),
+(124, 'gSnRw', 3, 1250.00, 5, 'pendiente', '2024-11-11 13:12:08', NULL),
+(125, 'gSnRw', 4, 5000.00, 15, 'pendiente', '2024-11-11 13:12:08', NULL),
+(126, 'eWBS9', 5, 5000.00, 11, 'pendiente', '2024-11-13 04:37:16', NULL),
+(127, '2zmKA', 5, 5000.00, 11, 'pendiente', '2024-11-14 03:30:17', NULL);
 
 -- --------------------------------------------------------
 
@@ -318,7 +365,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `usuario`, `clave`, `rol`, `fechaBaja`) VALUES
-(1, 'AhoraSeLlamaCoco', '1234', 'cervecero', '2024-11-06'),
+(1, 'AhoraSeLlamaCoco', '1234', 'cervecero', '2024-11-11'),
 (2, 'pedro', 'dasdqsdw2sd23', 'cocinero', NULL),
 (3, 'jorge', 'sda2s2f332f2', 'bartender', '2024-11-05'),
 (4, 'Pertine', '$2y$10$9da9Jxtr7hWyiFjOB38Lo.w1pEVdsfxqPz1rx5tNX6Na4IZIyXzHi', 'socio', NULL),
@@ -334,7 +381,10 @@ INSERT INTO `usuarios` (`id`, `usuario`, `clave`, `rol`, `fechaBaja`) VALUES
 (14, 'Ruben Patagonia', '$2y$10$Htm29cSTcDF14ZF.R5pOau.qWXqfHp3VpF7xcykGao4qSPNpKUNFC', 'cocinero', NULL),
 (15, 'Juanete', '$2y$10$BtQMsEc1TM/7hlwI8SZ8VOdy995AIM18bY6cNmXpdG/H76AR5Fk6y', 'cocinero', NULL),
 (16, 'Juanete', '$2y$10$7bs88Pu6JVKs9etNmC1fVOGy9n1hmJtCE9UCXUWNKofPAAnC1AZW2', 'cocinero', NULL),
-(18, 'Rubencho', '$2y$10$uQDJtocm9ESZ3awHlnEP0e7Fhz8/fFpB13SkgAO5A4AZhsN51IUVi', 'bartender', NULL);
+(18, 'Rubencho', '$2y$10$uQDJtocm9ESZ3awHlnEP0e7Fhz8/fFpB13SkgAO5A4AZhsN51IUVi', 'bartender', NULL),
+(19, 'Rubencho', '$2y$10$jsgMmeKxK3HX87lRYW0SkOlkdtSizdVv4v6OXzDH4s8W4cxhc9.Qi', 'bartender', NULL),
+(20, 'Rubencho', '$2y$10$zItTxGy73bGz5BGaxMYshe0xx4TxKYKExjHyPPxjLBWihxOfCGS.6', 'bartender', NULL),
+(21, 'Rubencho', '$2y$10$GliilonMj3qbrQkQbsa6AeFb7DeuqE0Duxo8/0kDzo2gigGXGCqu6', 'bartender', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -383,31 +433,31 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `mesas`
 --
 ALTER TABLE `mesas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `productosPedidos`
 --
 ALTER TABLE `productosPedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Restricciones para tablas volcadas

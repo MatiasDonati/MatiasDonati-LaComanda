@@ -91,8 +91,13 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
 $app->get('/productosPedidos', \ProductosPedidosController::class . ':ObtenerTodos');
 
 $app->get('/productosPedidos/comida', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero']));
+$app->get('/productosPedidos/comidaPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorComidaPendiente')->add(new RolMiddleware(['cocinero']));
+
 $app->get('/productosPedidos/trago', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender']));
+$app->get('/productosPedidos/tragoPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorTragoPendiente')->add(new RolMiddleware(['bartender']));
+
 $app->get('/productosPedidos/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero']));
+$app->get('/productosPedidos/cervezaPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorCervezaPendiente')->add(new RolMiddleware(['cervecero']));
 
 $app->get('/productosPedidos/{numeroDePedido}', \ProductosPedidosController::class . ':ObtenerPorPedido');
 $app->get('/productosPedidos/tipo/{tipoDeProducto}', \ProductosPedidosController::class . ':ObtenerProductosPorTipo');

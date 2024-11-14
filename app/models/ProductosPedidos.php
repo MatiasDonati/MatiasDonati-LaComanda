@@ -10,7 +10,7 @@ class ProductosPedidos
 
     public $precio;
     public $empleadoACargo; 
-    public $estado = 'preparacion';
+    public $estado = 'pendiente';
     public $timpoInicial;
     public $timpoFinal = null;
 
@@ -87,6 +87,24 @@ class ProductosPedidos
             JOIN productos p ON pp.productoId = p.id
             WHERE p.tipo = :tipoDeProducto
         ");
+        
+        $consulta->bindValue(':tipoDeProducto', $tipoDeProducto, PDO::PARAM_STR);
+        
+        $consulta->execute();
+
+        return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function ObtenerProductosPorTipoPendiente($tipoDeProducto)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "SELECT pp.*, p.tipo
+            FROM productosPedidos pp
+            JOIN productos p ON pp.productoId = p.id
+            WHERE p.tipo = :tipoDeProducto AND pp.estado = 'pendiente'"
+        );
         
         $consulta->bindValue(':tipoDeProducto', $tipoDeProducto, PDO::PARAM_STR);
         
