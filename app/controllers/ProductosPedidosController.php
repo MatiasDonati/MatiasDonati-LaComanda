@@ -39,79 +39,50 @@ class ProductosPedidosController
         }
     }
 
-    public static function ObtenerProductosPorComida($request, $response, $args)
+    public static function ObtenerProductosGenerico($request, $response, $tipo, $estado = null)
     {
-        $productos = ProductosPedidos::ObtenerProductosPorTipo('comida');
-        
+        $productos = $estado === 'pendiente'
+            ? ProductosPedidos::ObtenerProductosPorTipoPendiente($tipo) 
+            : ProductosPedidos::ObtenerProductosPorTipo($tipo);
+
         if ($productos) {
             $response->getBody()->write(json_encode($productos));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } else {
-            $response->getBody()->write(json_encode(["mensaje" => "No se encontraron productos de tipo comida"]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
-        }
-    }
-    public static function ObtenerProductosPorComidaPendiente($request, $response, $args)
-    {
-        $productos = ProductosPedidos::ObtenerProductosPorTipoPendiente('comida');
-        
-        if ($productos) {
-            $response->getBody()->write(json_encode($productos));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-        } else {
-            $response->getBody()->write(json_encode(["mensaje" => "No se encontraron productos de tipo comida"]));
+            $mensaje = ["mensaje" => "No se encontraron productos de tipo $tipo" . ($estado ? " $estado" : "")];
+            $response->getBody()->write(json_encode($mensaje));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
         }
     }
 
-    
+    public static function ObtenerProductosPorComida($request, $response, $args)
+    {
+        return self::ObtenerProductosGenerico($request, $response, 'comida');
+    }
+
+    public static function ObtenerProductosPorComidaPendiente($request, $response, $args)
+    {
+        return self::ObtenerProductosGenerico($request, $response, 'comida', 'pendiente');
+    }
+
     public static function ObtenerProductosPorTrago($request, $response, $args)
     {
-        $productos = ProductosPedidos::ObtenerProductosPorTipo('trago');
-        
-        if ($productos) {
-            $response->getBody()->write(json_encode($productos));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-        } else {
-            $response->getBody()->write(json_encode(["mensaje" => "No se encontraron productos de tipo tragos"]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
-        }
+        return self::ObtenerProductosGenerico($request, $response, 'trago');
     }
+
     public static function ObtenerProductosPorTragoPendiente($request, $response, $args)
     {
-        $productos = ProductosPedidos::ObtenerProductosPorTipoPendiente('trago');
-        
-        if ($productos) {
-            $response->getBody()->write(json_encode($productos));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-        } else {
-            $response->getBody()->write(json_encode(["mensaje" => "No se encontraron productos de tipo tragos"]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
-        }
+        return self::ObtenerProductosGenerico($request, $response, 'trago', 'pendiente');
     }
 
     public static function ObtenerProductosPorCerveza($request, $response, $args)
     {
-        $productos = ProductosPedidos::ObtenerProductosPorTipo('cerveza');
-        
-        if ($productos) {
-            $response->getBody()->write(json_encode($productos));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-        } else {
-            $response->getBody()->write(json_encode(["mensaje" => "No se encontraron productos de tipo cerveza"]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
-        }
+        return self::ObtenerProductosGenerico($request, $response, 'cerveza');
     }
+
     public static function ObtenerProductosPorCervezaPendiente($request, $response, $args)
     {
-        $productos = ProductosPedidos::ObtenerProductosPorTipoPendiente('cerveza');
-        
-        if ($productos) {
-            $response->getBody()->write(json_encode($productos));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-        } else {
-            $response->getBody()->write(json_encode(["mensaje" => "No se encontraron productos de tipo cerveza"]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
-        }
+        return self::ObtenerProductosGenerico($request, $response, 'cerveza', 'pendiente');
     }
+
 }
