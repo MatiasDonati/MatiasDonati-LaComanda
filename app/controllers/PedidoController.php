@@ -3,6 +3,8 @@
 require_once './models/Pedido.php';
 require_once './interfaces/IApiUsable.php';
 require_once './models/ProductosPedidos.php';
+include_once(__DIR__ . '/../utils/Archivos.php');
+
 
 class PedidoController implements IApiUsable
 {
@@ -69,6 +71,30 @@ class PedidoController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
     
+    public function TraerUnoPorNumeroDePedido($request, $response, $args)
+    {
+        $parametros = $request->getParsedBody();
+
+        $numeroDePedido = $parametros['numeroDePedido'];
+
+        $pedido = Pedido::obtenerPedidoPorNumeroDePedido($numeroDePedido);
+        
+        if (!$pedido) {
+            return $response->withStatus(404)->write(json_encode(['error' => 'Pedido no encontrado']));
+        }
+
+        $numeroDePedido = $pedido->numeroDePedido;
+
+        $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
+    
+        $payload = [
+            'pedido' => $pedido,
+            'productos' => $productos 
+        ];
+        
+        $response->getBody()->write(json_encode($payload));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
 
 public function TraerTodos($request, $response, $args)
 {
@@ -96,7 +122,6 @@ public function TraerTodos($request, $response, $args)
 
     public function ModificarUno($request, $response, $args)
     {
-
         // $parametros = $request->getParsedBody();
         $id = $args['id'];
 
@@ -132,4 +157,32 @@ public function TraerTodos($request, $response, $args)
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
+
+    public static function TomarFoto($request,  $response)
+    {
+        $parametros = $request->getParsedBody();
+
+        $numeroDePedido = $parametros['numeroDePedido'];
+        
+        $pedido =  Pedido::obtenerPedidoPorNumeroDePedido($numeroDePedido);
+
+        $foto = Archivo::GuardarArchivo("db/fotos/", "{$numeroDePedido}", 'foto', '.jpg');
+
+        if($pedido && $foto){
+
+            echo 'Tenemos pedido, tenemos foto para pedido!';
+            echo Pedido::cargarFotoDb($numeroDePedido, $foto) ? 'Se Subio a la base dedatos' : 'Se Subio a la base dedatos';
+
+
+        }
+
+        $pedido->foto = $foto;
+        $payload = json_encode(array("msg" => "Foto agregada con exito"));
+        $response->getBody()->write($payload);
+
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+
+
 }

@@ -86,6 +86,11 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware())->add(new RolMiddleware(['mozo']));
   $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware())->add(new RolMiddleware(['mozo']));
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
+  $group->post('/tomarFoto', \PedidoController::class . ':TomarFoto')->add(new RolMiddleware(['mozo'])); 
+  
+  // Agregar MW para campos numeroPed y foto q no eaten vacios
+  // Agregar MW para campos numeroPed y foto q no eaten vacios
+
 });
 
 $app->get('/productosPedidos', \ProductosPedidosController::class . ':ObtenerTodos');

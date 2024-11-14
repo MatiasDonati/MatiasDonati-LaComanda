@@ -62,6 +62,17 @@ class Pedido
         return $consulta->fetchObject('Pedido');
     }
 
+    public static function obtenerPedidoPorNumeroDePedido($numeroDePedido)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, mesaId, numeroDePedido, precio, fecha, estado, cliente FROM pedidos WHERE numeroDePedido = :numeroDePedido");
+        $consulta->bindValue(':numeroDePedido', $numeroDePedido, PDO::PARAM_STR);
+        $consulta->execute();
+    
+        return $consulta->fetchObject('Pedido');
+    }
+    
+
     public static function modificarPedido($id, $estado)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -113,4 +124,22 @@ class Pedido
 
         return $codigo;
     }
+
+    public static function cargarFotoDb($numeroDePedido, $foto)
+    {
+        if ($foto) {
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            $consulta = $objAccesoDatos->prepararConsulta("UPDATE pedidos SET foto = :foto WHERE numeroDePedido = :numeroDePedido");
+            $consulta->bindValue(':numeroDePedido', $numeroDePedido, PDO::PARAM_INT);
+            $consulta->bindValue(':foto', $foto, PDO::PARAM_STR);
+            
+            $consulta->execute();
+
+            return $consulta->rowCount() > 0;  // Retorna true si se actualizó la foto
+        }
+
+        return false; 
+    }
+
+
 }
