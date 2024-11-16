@@ -135,7 +135,7 @@ class Pedido
             
             $consulta->execute();
 
-            return $consulta->rowCount() > 0;  // Retorna true si se actualizó la foto
+            return $consulta->rowCount() > 0;
         }
 
         return false; 

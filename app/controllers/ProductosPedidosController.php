@@ -61,7 +61,7 @@ class ProductosPedidosController
     }
 
     public static function ObtenerProductosPorComidaPendiente($request, $response, $args)
-    {
+    {        
         return self::ObtenerProductosGenerico($request, $response, 'comida', 'pendiente');
     }
 

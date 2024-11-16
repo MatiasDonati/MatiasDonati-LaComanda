@@ -109,8 +109,15 @@ class ProductosPedidos
         $consulta->bindValue(':tipoDeProducto', $tipoDeProducto, PDO::PARAM_STR);
         
         $consulta->execute();
-
-        return $consulta->fetchAll(PDO::FETCH_ASSOC);
+        
+        $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    
+        if (empty($resultado)) {
+            return null;
+        }
+    
+        return $resultado;
     }
+    
     
 }
