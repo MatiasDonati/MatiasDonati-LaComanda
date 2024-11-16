@@ -138,6 +138,31 @@ class ProductosPedidos
         return $resultado;
     }
 
+    public static function ObtenerProductosEnPreparacion($tipoDeProducto)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "SELECT pp.*, p.tipo
+            FROM productosPedidos pp
+            JOIN productos p ON pp.productoId = p.id
+            WHERE p.tipo = :tipoDeProducto AND pp.estado = 'en preparacion'"
+        );
+        
+        $consulta->bindValue(':tipoDeProducto', $tipoDeProducto, PDO::PARAM_STR);
+        
+        $consulta->execute();
+        
+        $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    
+        if (empty($resultado)) {
+            return null;
+        }
+    
+        return $resultado;
+
+    }
+
     public static function PrepararProducto($id, $tiempoEstimado)
     {   
         $producto = self::ObtenerProductosPorId($id);
@@ -156,6 +181,26 @@ class ProductosPedidos
         } else {
             return false;
         }
+    }
+
+    public static function ListoParaServir($id)
+    {
+        $producto = self::ObtenerProductosPorId($id);
+    
+        if ($producto && $producto->estado === 'en preparacion') {
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            
+            $consultaUpdate = $objAccesoDatos->prepararConsulta(
+                "UPDATE productosPedidos SET estado = 'listo para servir' WHERE id = :id"
+            );
+            $consultaUpdate->bindValue(':id', $id, PDO::PARAM_INT);
+            $consultaUpdate->execute();
+    
+            return true;
+        } else {
+            return false;
+        }
+
     }
     
 

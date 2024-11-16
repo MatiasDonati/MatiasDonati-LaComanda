@@ -90,7 +90,7 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
   // Agregar los MW
 
   $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware())->add(new RolMiddleware(['mozo']));
-  
+
   $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware())->add(new RolMiddleware(['mozo']));
   $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
   $group->post('/tomarFoto', \PedidoController::class . ':TomarFoto')->add(new RolMiddleware(['mozo'])); 
@@ -111,6 +111,10 @@ $app->get('/productosPedidos/tragoPendiente', \ProductosPedidosController::class
 $app->post('/productosPedidos/prepararTrago/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['bartender']));
 $app->post('/productosPedidos/prepararComida/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cocinero']));
 $app->post('/productosPedidos/prepararCerveza/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cervecero']));
+
+$app->get('/productosPedidos/listoParaServirTrago/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['bartender']));
+$app->get('/productosPedidos/listoParaServirComida/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cocinero']));
+$app->get('/productosPedidos/listoParaServirCerveza/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cervecero']));
 
 $app->get('/productosPedidos/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero']));
 $app->get('/productosPedidos/cervezaPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorCervezaPendiente')->add(new RolMiddleware(['cervecero']));

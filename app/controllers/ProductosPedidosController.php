@@ -134,5 +134,50 @@ class ProductosPedidosController
         return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
     }
 
-    
+    public static function ListoParaServir($request, $response, $args)
+    {
+        $idPedido = $args['id'];
+
+        $ruta = $request->getUri()->getPath();
+        $tipoProducto = '';
+
+        if (strpos($ruta, '/productosPedidos/listoParaServirTrago/') !== false) {
+            $tipoProducto = 'trago';
+        } elseif (strpos($ruta, '/productosPedidos/listoParaServirComida/') !== false) {
+            $tipoProducto = 'comida';
+        } elseif (strpos($ruta, '/productosPedidos/listoParaServirCerveza/') !== false) {
+            $tipoProducto = 'cerveza';
+        } else {
+            $mensaje = ["mensaje" => "Tipo de producto no válido."];
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $producto = ProductosPedidos::ObtenerProductosEnPreparacion($tipoProducto);
+
+        $productoEncontrado = false;
+        if ($producto) {
+            foreach ($producto as $item) {
+                if ($item['id'] == $idPedido) {
+                    $productoEncontrado = true;
+                    break;
+                }
+            }
+        }
+
+        if ($productoEncontrado) {
+            $listoParaServir = ProductosPedidos::ListoParaServir($idPedido);
+
+            if ($listoParaServir) {
+                $mensaje = ["mensaje" => "El estado del pedido $idPedido se cambió a 'listo para servir'"];
+                $response->getBody()->write(json_encode($mensaje));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            }
+        }
+
+        $mensaje = ["mensaje" => "No se encontró un producto con el ID $idPedido o no está en estado 'en preparacion' del tipo $tipoProducto"];
+        $response->getBody()->write(json_encode($mensaje));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+    }
+
 }
