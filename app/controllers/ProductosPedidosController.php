@@ -90,25 +90,11 @@ class ProductosPedidosController
         $idPedido = $args['id'];
 
 
-        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
-        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
-        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
-        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
-        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
+        // Aca dependiendo la Ruta va a ser el tipo de producto y cada ruta si MW !
 
-        // Agregarle tiempo estimado cuando se pone "en preparacion"
-        // Agregarle tiempo estimado cuando se pone "en preparacion"
-        // Agregarle tiempo estimado cuando se pone "en preparacion"
-        // Agregarle tiempo estimado cuando se pone "en preparacion"
         // Agregarle tiempo estimado cuando se pone "en preparacion"
 
         // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
-        // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
-        // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
-        // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
-
-
-
 
 
         $tipoProducto = 'trago';

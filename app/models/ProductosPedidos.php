@@ -14,6 +14,7 @@ class ProductosPedidos
     public $timpoInicial;
     public $timpoFinal = null;
 
+
     public function crearProductosPedidos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();

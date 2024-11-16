@@ -73,51 +73,49 @@ class PedidoController implements IApiUsable
     
     public function TraerUnoPorNumeroDePedido($request, $response, $args)
     {
-        $parametros = $request->getParsedBody();
-
-        $numeroDePedido = $parametros['numeroDePedido'];
-
+        $numeroDePedido = $args['numeroDePedido'];
         $pedido = Pedido::obtenerPedidoPorNumeroDePedido($numeroDePedido);
-        
+    
         if (!$pedido) {
-            return $response->withStatus(404)->write(json_encode(['error' => 'Pedido no encontrado']));
+            $response->getBody()->write(json_encode(['error' => 'Pedido no encontrado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
         }
-
+    
         $numeroDePedido = $pedido->numeroDePedido;
-
         $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
     
         $payload = [
             'pedido' => $pedido,
             'productos' => $productos 
         ];
-        
+    
         $response->getBody()->write(json_encode($payload));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
+    
 
-public function TraerTodos($request, $response, $args)
-{
+    public function TraerTodos($request, $response, $args)
+    {
 
-    $pedidos = Pedido::obtenerTodos();
+        $pedidos = Pedido::obtenerTodos();
 
-    $pedidosConProductos = [];
+        $pedidosConProductos = [];
 
-    foreach ($pedidos as $pedido) {
-        $numeroDePedido = $pedido->numeroDePedido;
+        foreach ($pedidos as $pedido) {
+            $numeroDePedido = $pedido->numeroDePedido;
 
-        $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
+            $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
 
-        $pedidosConProductos[] = [
-            'pedido' => $pedido,
-            'productos' => $productos
-        ];
+            $pedidosConProductos[] = [
+                'pedido' => $pedido,
+                'productos' => $productos
+            ];
+        }
+
+
+        $response->getBody()->write(json_encode($pedidosConProductos));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
-
-
-    $response->getBody()->write(json_encode($pedidosConProductos));
-    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-}
 
 
     public function ModificarUno($request, $response, $args)
