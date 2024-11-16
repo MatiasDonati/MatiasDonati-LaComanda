@@ -96,6 +96,8 @@ class ProductosPedidos
         return $consulta->fetchObject('Usuario');
     }
 
+
+
     public static function ObtenerProductosPorTipo($tipoDeProducto)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -113,6 +115,8 @@ class ProductosPedidos
 
         return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    
 
     public static function ObtenerProductosPorTipoPendiente($tipoDeProducto)
     {
@@ -162,6 +166,30 @@ class ProductosPedidos
         return $resultado;
 
     }
+
+    public static function ObtenerProductosPorEstadoYTipo($tipoDeProducto, $estado)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "SELECT pp.*, p.tipo
+            FROM productosPedidos pp
+            JOIN productos p ON pp.productoId = p.id
+            WHERE p.tipo = :tipoDeProducto AND pp.estado = :estado"
+        );
+        
+        $consulta->bindValue(':tipoDeProducto', $tipoDeProducto, PDO::PARAM_STR);
+        $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
+        
+        $consulta->execute();
+        
+        $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    
+        return $resultado ?: null;
+    }
+    
+
+
 
     public static function PrepararProducto($id, $tiempoEstimado)
     {   

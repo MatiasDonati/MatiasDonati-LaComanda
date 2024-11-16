@@ -71,6 +71,7 @@ $app->group('/productos', function (RouteCollectorProxy $group) {
 });
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
+
   $group->post('/csv', \MesaController::class . ':SubirCsv')->add(new RolMiddleware(['socio']));
   $group->get('/csv', \MesaController::class . ':DescargarCsv')->add(new RolMiddleware(['socio']));
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
@@ -81,6 +82,9 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
 });
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
+
+  $group->post('/verPedidoDeUnaMesa', \PedidoController::class . ':VerPedidoDeMesa');
+
   $group->get('[/]', \PedidoController::class . ':TraerTodos');
   $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddleware());
 
@@ -100,13 +104,18 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
 
 });
 
+// AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
+// AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
+
 $app->get('/productosPedidos', \ProductosPedidosController::class . ':ObtenerTodos');
+$app->get('/productosPedidos/comida', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero', 'socio']));
+$app->get('/productosPedidos/trago', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender', 'socio']));
+$app->get('/productosPedidos/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero', 'socio']));
 
-$app->get('/productosPedidos/comida', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero']));
-$app->get('/productosPedidos/comidaPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorComidaPendiente')->add(new RolMiddleware(['cocinero']));
-
-$app->get('/productosPedidos/trago', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender']));
-$app->get('/productosPedidos/tragoPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorTragoPendiente')->add(new RolMiddleware(['bartender']));
+// MAs dinamico 'pendiente', 'en preparacion' o 'listo para servir'
+$app->get('/productosPedidos/trago/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender', 'socio']));
+$app->get('/productosPedidos/cerveza/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero', 'socio']));
+$app->get('/productosPedidos/comida/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero', 'socio']));
 
 $app->post('/productosPedidos/prepararTrago/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['bartender']));
 $app->post('/productosPedidos/prepararComida/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cocinero']));
@@ -116,12 +125,11 @@ $app->get('/productosPedidos/listoParaServirTrago/{id}', \ProductosPedidosContro
 $app->get('/productosPedidos/listoParaServirComida/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cocinero']));
 $app->get('/productosPedidos/listoParaServirCerveza/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cervecero']));
 
-$app->get('/productosPedidos/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero']));
-$app->get('/productosPedidos/cervezaPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorCervezaPendiente')->add(new RolMiddleware(['cervecero']));
-
 $app->get('/productosPedidos/{numeroDePedido}', \ProductosPedidosController::class . ':ObtenerPorPedido');
 $app->get('/productosPedidos/tipo/{tipoDeProducto}', \ProductosPedidosController::class . ':ObtenerProductosPorTipo');
 
+// AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
+// AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
 
 
 $app->get('[/]', function (Request $request, Response $response) {    

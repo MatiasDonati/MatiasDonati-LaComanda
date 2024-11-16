@@ -41,8 +41,17 @@ class ProductosPedidosController
 
     public static function ObtenerProductosGenerico($request, $response, $tipo, $estado = null)
     {
-        $productos = $estado === 'pendiente'
-            ? ProductosPedidos::ObtenerProductosPorTipoPendiente($tipo) 
+
+        $productosValidos = ['pendiente','en preparacion',  'listo para servir'];
+
+        if ($estado !== null && !in_array($estado, $productosValidos)) {
+            $mensaje = ["mensaje" => "El estado '$estado' no existe. Los estados son: pendiente, en preparacion y listo para servir."];
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $productos = ($estado === 'pendiente' || $estado === 'en preparacion' || $estado === 'listo para servir')
+            ? ProductosPedidos::ObtenerProductosPorEstadoYTipo($tipo, $estado)
             : ProductosPedidos::ObtenerProductosPorTipo($tipo);
 
         if ($productos) {
@@ -57,33 +66,23 @@ class ProductosPedidosController
 
     public static function ObtenerProductosPorComida($request, $response, $args)
     {
-        return self::ObtenerProductosGenerico($request, $response, 'comida');
-    }
-
-    public static function ObtenerProductosPorComidaPendiente($request, $response, $args)
-    {        
-        return self::ObtenerProductosGenerico($request, $response, 'comida', 'pendiente');
+        $estado = $args['estado'] ?? null;
+        return self::ObtenerProductosGenerico($request, $response, 'comida', $estado);
     }
 
     public static function ObtenerProductosPorTrago($request, $response, $args)
     {
-        return self::ObtenerProductosGenerico($request, $response, 'trago');
+        $estado = $args['estado'] ?? null;
+        return self::ObtenerProductosGenerico($request, $response, 'trago', $estado);
     }
-
-    public static function ObtenerProductosPorTragoPendiente($request, $response, $args)
-    {
-        return self::ObtenerProductosGenerico($request, $response, 'trago', 'pendiente');
-    }
-
+    
     public static function ObtenerProductosPorCerveza($request, $response, $args)
     {
-        return self::ObtenerProductosGenerico($request, $response, 'cerveza');
+        $estado = $args['estado'] ?? null;
+        return self::ObtenerProductosGenerico($request, $response, 'cerveza', $estado);
+
     }
 
-    public static function ObtenerProductosPorCervezaPendiente($request, $response, $args)
-    {
-        return self::ObtenerProductosGenerico($request, $response, 'cerveza', 'pendiente');
-    }
 
     public static function PrepararProducto($request, $response, $args)
     {
@@ -153,7 +152,7 @@ class ProductosPedidosController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $producto = ProductosPedidos::ObtenerProductosEnPreparacion($tipoProducto);
+        $producto = ProductosPedidos::ObtenerProductosPorTipoPendiente($tipoProducto);
 
         $productoEncontrado = false;
         if ($producto) {

@@ -185,6 +185,21 @@ class PedidoController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    public static function VerPedidoDeMesa($request,  $response, $args)
+    {
+
+        $mensaje = 'Ver Pedido de una Mesa';
+
+        // Obtener los Productos del PEdido
+        // En poructosPedido tienen el numeroDePEdido para buscarlos
+        // Luego hacer calculo para ver el tiempo restante.
+        
+
+        $response->getBody()->write(json_encode(array("mensaje" => $mensaje)));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+
+
+    }
 
 
 }
