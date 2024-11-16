@@ -88,19 +88,27 @@ class ProductosPedidosController
     public static function PrepararProducto($request, $response, $args)
     {
         $idPedido = $args['id'];
+        $parametros = $request->getParsedBody();
 
+        $tiempoEstimado = $parametros['tiempoEstimado'];
 
-        // Aca dependiendo la Ruta va a ser el tipo de producto y cada ruta si MW !
+        $ruta = $request->getUri()->getPath();
+        $tipoProducto = '';
 
-        // Agregarle tiempo estimado cuando se pone "en preparacion"
+        if (strpos($ruta, '/productosPedidos/prepararTrago/') !== false) {
+            $tipoProducto = 'trago';
+        } elseif (strpos($ruta, '/productosPedidos/prepararComida/') !== false) {
+            $tipoProducto = 'comida';
+        } elseif (strpos($ruta, '/productosPedidos/prepararCerveza/') !== false) {
+            $tipoProducto = 'cerveza';
+        } else {
+            $mensaje = ["mensaje" => "Tipo de producto no válido."];
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
 
-        // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
-
-
-        $tipoProducto = 'trago';
-    
         $producto = ProductosPedidos::ObtenerProductosPorTipoPendiente($tipoProducto);
-    
+
         $productoEncontrado = false;
         if ($producto) {
             foreach ($producto as $item) {
@@ -110,22 +118,21 @@ class ProductosPedidosController
                 }
             }
         }
-    
+
         if ($productoEncontrado) {
-            $preparandoProducto = ProductosPedidos::PrepararProducto($idPedido);
-    
+            $preparandoProducto = ProductosPedidos::PrepararProducto($idPedido, $tiempoEstimado);
+
             if ($preparandoProducto) {
                 $mensaje = ["mensaje" => "El estado del pedido $idPedido se cambió a 'en preparación'"];
                 $response->getBody()->write(json_encode($mensaje));
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             }
         }
-    
+
         $mensaje = ["mensaje" => "No se encontró un producto con el ID $idPedido o no está en estado 'pendiente' del tipo $tipoProducto"];
         $response->getBody()->write(json_encode($mensaje));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
     }
-    
-    
 
+    
 }

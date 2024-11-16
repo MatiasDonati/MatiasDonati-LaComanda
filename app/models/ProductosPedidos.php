@@ -11,14 +11,17 @@ class ProductosPedidos
     public $precio;
     public $empleadoACargo; 
     public $estado = 'pendiente';
-    public $timpoInicial;
-    public $timpoFinal = null;
+    public $tiempoInicial;
+
+    public $tiempoFinal = null;
+
+    public $tiempoEstimado = null;
 
 
     public function crearProductosPedidos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productosPedidos (numeroDePedido, productoId, empleadoACargo, precio, estado, timpoInicial, timpoFinal) VALUES (:numeroDePedido, :productoId, :empleadoACargo, :precio, :estado, :timpoInicial, :timpoFinal)"
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productosPedidos (numeroDePedido, productoId, empleadoACargo, precio, estado, tiempoInicial, tiempoFinal, tiempoEstimado) VALUES (:numeroDePedido, :productoId, :empleadoACargo, :precio, :estado, :tiempoInicial, :tiempoFinal, :tiempoEstimado)"
         );
         
         $consulta->bindValue(':numeroDePedido', $this->numeroDePedido, PDO::PARAM_INT);
@@ -26,8 +29,10 @@ class ProductosPedidos
         $consulta->bindValue(':empleadoACargo', $this->empleadoACargo, PDO::PARAM_INT);
         $consulta->bindValue(':precio', $this->precio, PDO::PARAM_STR);
         $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
-        $consulta->bindValue(':timpoInicial', date("Y-m-d H:i:s"), PDO::PARAM_STR); // FechaAhora
-        $consulta->bindValue(':timpoFinal', $this->timpoFinal, PDO::PARAM_NULL);
+        $consulta->bindValue(':tiempoInicial', date("Y-m-d H:i:s"), PDO::PARAM_STR); //Ahora
+
+        $consulta->bindValue(':tiempoFinal', $this->tiempoFinal, PDO::PARAM_NULL);
+        $consulta->bindValue(':tiempoEstimado', $this->tiempoEstimado, PDO::PARAM_NULL);
     
         $consulta->execute();
     
@@ -133,7 +138,7 @@ class ProductosPedidos
         return $resultado;
     }
 
-    public static function PrepararProducto($id)
+    public static function PrepararProducto($id, $tiempoEstimado)
     {   
         $producto = self::ObtenerProductosPorId($id);
     
@@ -141,9 +146,10 @@ class ProductosPedidos
             $objAccesoDatos = AccesoDatos::obtenerInstancia();
             
             $consultaUpdate = $objAccesoDatos->prepararConsulta(
-                "UPDATE productosPedidos SET estado = 'en preparacion' WHERE id = :id"
+                "UPDATE productosPedidos SET estado = 'en preparacion', tiempoEstimado = :tiempoEstimado WHERE id = :id"
             );
             $consultaUpdate->bindValue(':id', $id, PDO::PARAM_INT);
+            $consultaUpdate->bindValue(':tiempoEstimado', $tiempoEstimado, PDO::PARAM_INT);
             $consultaUpdate->execute();
     
             return true;

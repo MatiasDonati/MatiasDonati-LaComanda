@@ -41,6 +41,10 @@ class PedidoController implements IApiUsable
             $productoPedido->empleadoACargo = $empleadoACargo->id;
             $productoPedido->precio = $productoDetalle->precio;
             $productoPedido->crearProductosPedidos();
+
+            // echo $productoNombre .PHP_EOL;
+            // echo $idProducto .PHP_EOL;
+
         }
     
         $payload = json_encode(array("mensaje" => "Pedido creado con éxito"));
