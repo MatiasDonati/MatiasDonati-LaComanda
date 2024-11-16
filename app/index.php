@@ -100,6 +100,7 @@ $app->get('/productosPedidos/comidaPendiente', \ProductosPedidosController::clas
 
 $app->get('/productosPedidos/trago', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender']));
 $app->get('/productosPedidos/tragoPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorTragoPendiente')->add(new RolMiddleware(['bartender']));
+$app->get('/productosPedidos/prepararTrago/{id}', \ProductosPedidosController::class . ':PrepararProducto');
 
 $app->get('/productosPedidos/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero']));
 $app->get('/productosPedidos/cervezaPendiente', \ProductosPedidosController::class . ':ObtenerProductosPorCervezaPendiente')->add(new RolMiddleware(['cervecero']));

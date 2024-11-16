@@ -52,6 +52,19 @@ class ProductosPedidos
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'ProductosPedidos');
     }
 
+
+    public static function ObtenerProductosPorId($id)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM productosPedidos WHERE id = :id");
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+        $consulta->execute();
+    
+
+        return $consulta->fetch(PDO::FETCH_OBJ);
+    }
+    
+
     public static function ObtenerUsuariosPorTipoDePedido($tipoDeProducto)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -118,6 +131,27 @@ class ProductosPedidos
     
         return $resultado;
     }
+
+    public static function PrepararProducto($id)
+    {   
+        $producto = self::ObtenerProductosPorId($id);
+    
+        if ($producto && $producto->estado === 'pendiente') {
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            
+            $consultaUpdate = $objAccesoDatos->prepararConsulta(
+                "UPDATE productosPedidos SET estado = 'en preparacion' WHERE id = :id"
+            );
+            $consultaUpdate->bindValue(':id', $id, PDO::PARAM_INT);
+            $consultaUpdate->execute();
+    
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+
     
     
 }

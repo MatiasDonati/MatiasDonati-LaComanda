@@ -85,4 +85,61 @@ class ProductosPedidosController
         return self::ObtenerProductosGenerico($request, $response, 'cerveza', 'pendiente');
     }
 
+    public static function PrepararProducto($request, $response, $args)
+    {
+        $idPedido = $args['id'];
+
+
+        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
+        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
+        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
+        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
+        // Aca dependiendo la Ruta va a ser el tipo de prod y cada ruta si MW !
+
+        // Agregarle tiempo estimado cuando se pone "en preparacion"
+        // Agregarle tiempo estimado cuando se pone "en preparacion"
+        // Agregarle tiempo estimado cuando se pone "en preparacion"
+        // Agregarle tiempo estimado cuando se pone "en preparacion"
+        // Agregarle tiempo estimado cuando se pone "en preparacion"
+
+        // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
+        // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
+        // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
+        // Habria que ponero en la tabla "tiempoEstimado y en el modelo y ver en todos los lados q arreglar LRPM...
+
+
+
+
+
+        $tipoProducto = 'trago';
+    
+        $producto = ProductosPedidos::ObtenerProductosPorTipoPendiente($tipoProducto);
+    
+        $productoEncontrado = false;
+        if ($producto) {
+            foreach ($producto as $item) {
+                if ($item['id'] == $idPedido) {
+                    $productoEncontrado = true;
+                    break;
+                }
+            }
+        }
+    
+        if ($productoEncontrado) {
+            $preparandoProducto = ProductosPedidos::PrepararProducto($idPedido);
+    
+            if ($preparandoProducto) {
+                $mensaje = ["mensaje" => "El estado del pedido $idPedido se cambió a 'en preparación'"];
+                $response->getBody()->write(json_encode($mensaje));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            }
+        }
+    
+        $mensaje = ["mensaje" => "No se encontró un producto con el ID $idPedido o no está en estado 'pendiente' del tipo $tipoProducto"];
+        $response->getBody()->write(json_encode($mensaje));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+    }
+    
+    
+
 }
