@@ -185,21 +185,48 @@ class PedidoController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public static function VerPedidoDeMesa($request,  $response, $args)
+
+    public static function VerPedidoDeMesa($request, $response, $args)
     {
 
-        $mensaje = 'Ver Pedido de una Mesa';
+        // Esta mal porque tiene armar un array que contenga este calculo:
+        // de cada producto: 
+        // (tiempoEstimado) - [(momento de la consulta(Date)) - (tiempo inicial (Date))]
 
-        // Obtener los Productos del PEdido
-        // En poructosPedido tienen el numeroDePEdido para buscarlos
-        // Luego hacer calculo para ver el tiempo restante.
-        
-
-        $response->getBody()->write(json_encode(array("mensaje" => $mensaje)));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-
-
+        $parametros = $request->getParsedBody();
+        $numeroDePedido = $parametros['numeroDePedido'];
+        $codigoDeMesa = $parametros['mesa'];
+    
+        $pedido = Pedido::obtenerPedidoPorNumeroDePedido($numeroDePedido);
+    
+        if (!$pedido) {
+            $response->getBody()->write(json_encode(['error' => 'Pedido no encontrado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+    
+        if ($pedido->mesaId === $codigoDeMesa) {
+            $productos = ProductosPedidos::TraerProductosDeUnPedido($numeroDePedido);
+            
+            $tiempoTotalEstimado = 0;
+            foreach ($productos as $producto) {
+                if (isset($producto['tiempoEstimado'])) {
+                    $tiempoTotalEstimado += $producto['tiempoEstimado'];
+                }
+            }
+    
+            $response->getBody()->write(json_encode(array(
+                "mensaje" => $productos,
+                "tiempoTotalEstimado" => $tiempoTotalEstimado
+            )));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            $mensaje = 'No concuerda el pedido con la mesa.';
+            $response->getBody()->write(json_encode(array("mensaje" => "No se pudo Borrar el pedido")));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
     }
+
+    
 
 
 }

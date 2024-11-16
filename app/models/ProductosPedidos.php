@@ -117,6 +117,10 @@ class ProductosPedidos
     }
 
     
+ // ObtenerProductosPorTipoPendiente y ObtenerProductosEnPreparacion Me pa q no van mas 
+ // ObtenerProductosPorTipoPendiente y ObtenerProductosEnPreparacion Me pa q no van mas 
+ // ObtenerProductosPorTipoPendiente y ObtenerProductosEnPreparacion Me pa q no van mas 
+ // ObtenerProductosPorTipoPendiente y ObtenerProductosEnPreparacion Me pa q no van mas 
 
     public static function ObtenerProductosPorTipoPendiente($tipoDeProducto)
     {
@@ -230,8 +234,22 @@ class ProductosPedidos
         }
 
     }
+
+    public static function TraerProductosDeUnPedido($numeroDePedido)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "SELECT * FROM productosPedidos WHERE numeroDePedido = :numeroDePedido"
+        );
+    
+        $consulta->bindValue(':numeroDePedido', $numeroDePedido, PDO::PARAM_STR);
+    
+        $consulta->execute();
+    
+        return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
     
 
-    
-    
+
 }
