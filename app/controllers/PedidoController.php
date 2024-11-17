@@ -188,11 +188,6 @@ class PedidoController implements IApiUsable
 
     public static function VerPedidoDeMesa($request, $response, $args)
     {
-
-        // Esta mal porque tiene armar un array que contenga este calculo:
-        // de cada producto: 
-        // (tiempoEstimado) - [(momento de la consulta(Date)) - (tiempo inicial (Date))]
-
         $parametros = $request->getParsedBody();
         $numeroDePedido = $parametros['numeroDePedido'];
         $codigoDeMesa = $parametros['mesa'];
@@ -205,26 +200,62 @@ class PedidoController implements IApiUsable
         }
     
         if ($pedido->mesaId === $codigoDeMesa) {
+    
             $productos = ProductosPedidos::TraerProductosDeUnPedido($numeroDePedido);
-            
-            $tiempoTotalEstimado = 0;
+    
+            $tiemposDeProductos = [];
+    
+            $fechaAhora = new DateTime('now', new DateTimeZone('America/Argentina/Buenos_Aires'));
+    
             foreach ($productos as $producto) {
-                if (isset($producto['tiempoEstimado'])) {
-                    $tiempoTotalEstimado += $producto['tiempoEstimado'];
+    
+                $tiempoEstimado = new DateInterval("PT" . $producto['tiempoEstimado'] . "M");
+    
+                $fechaInicial = new DateTime($producto['tiempoInicial'], new DateTimeZone('America/Argentina/Buenos_Aires'));
+    
+                $diferencia = $fechaAhora->diff($fechaInicial);
+                $diferenciaEnMinutos = ($diferencia->h * 60) + $diferencia->i;
+    
+                $tiempoEstimado->i -= $diferenciaEnMinutos;
+    
+                if ($tiempoEstimado->i < 0 || $tiempoEstimado->h < 0) {
+                    $mensaje = "Listo para servir";
+                    $tiemposDeProductos[] = [
+                        'producto' => $producto['id'],
+                        'diferencia' => "Han pasado " . $diferencia->h . " horas, " . $diferencia->i . " minutos",
+                        'nuevoTiempoEstimado' => $mensaje
+                    ];
+                } else {
+
+                    //ajustar minutos si es negativo
+                    //ajustar minutos si es negativo
+                    
+                    if ($tiempoEstimado->i < 0) {
+                        $tiempoEstimado->h -= 1;
+                        $tiempoEstimado->i += 60; 
+                    }
+    
+                    $tiemposDeProductos[] = [
+                        'producto' => $producto['id'],
+                        'diferencia' => "Han pasado " . $diferencia->h . " horas, " . $diferencia->i . " minutos",
+                        'nuevoTiempoEstimado' => $tiempoEstimado->format('%H:%I:%S')
+                    ];
                 }
             }
     
             $response->getBody()->write(json_encode(array(
-                "mensaje" => $productos,
-                "tiempoTotalEstimado" => $tiempoTotalEstimado
+                "mensaje" => $tiemposDeProductos
             )));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } else {
             $mensaje = 'No concuerda el pedido con la mesa.';
-            $response->getBody()->write(json_encode(array("mensaje" => "No se pudo Borrar el pedido")));
+            $response->getBody()->write(json_encode(array("mensaje" => $mensaje)));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
+    
+
+    
 
     
 
