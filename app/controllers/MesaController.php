@@ -44,15 +44,39 @@ class MesaController extends Mesa implements IApiUsable
         $parametros = $request->getParsedBody();
         $id = $args['id'];
         $estado = $parametros['estado'];
-        $codigoDeIdentificacion = $parametros['codigoDeIdentificacion']; 
+        $codigoDeIdentificacion = $parametros['codigoDeIdentificacion'];
+    
+        $estadosValidos = ['con cliente esperando pedido', 'con cliente comiendo', 'con cliente pagando', 'cerrada'];
+    
+        // podria estar en MW de validaciones
+        // podria estar en MW de validaciones
 
-        Mesa::modificarMesa($id, $codigoDeIdentificacion, $estado);
-
-        $payload = json_encode(array("mensaje" => "Mesa modificada con exito"));
-
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
+        if (!in_array($estado, $estadosValidos)) {
+            $response->getBody()->write(json_encode(["mensaje" => "El estado no existe.", "estados validos"=>"con cliente esperando pedido, con cliente comiendo, con cliente pagando y cerrada"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    
+        $rolUsuario = $request->getAttribute('rolUsuario');
+        $mesaModificada = false;
+    
+        if ($rolUsuario === 'socio' && $estado === 'cerrada') {
+            Mesa::modificarMesa($id, $codigoDeIdentificacion, $estado);
+            $mesaModificada = true;
+        } elseif ($rolUsuario === 'mozo' && ($estado === 'con cliente esperando pedido' || $estado === 'con cliente comiendo' || $estado === 'con cliente pagando')) {
+            Mesa::modificarMesa($id, $codigoDeIdentificacion, $estado);
+            $mesaModificada = true;
+        }
+    
+        if ($mesaModificada) {
+            $payload = json_encode(["mensaje" => "Mesa modificada con éxito"]);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
+        } else {
+            $response->getBody()->write(json_encode(["mensaje" => "El estado y/o quien solicita es erróneo."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
     }
+    
     
     public function BorrarUno($request, $response, $args)
     {

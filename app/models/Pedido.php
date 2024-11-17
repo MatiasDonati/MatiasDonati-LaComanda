@@ -52,6 +52,14 @@ class Pedido
 		return $consulta->fetchAll(PDO::FETCH_COLUMN);
 	}
 
+    public static function obtenerTodosNumeroDePedido()
+	{
+		$objAccesoDatos = AccesoDatos::ObtenerInstancia();
+		$consulta = $objAccesoDatos->PrepararConsulta("SELECT numeroDePedido FROM pedidos");
+		$consulta->execute();
+		return $consulta->fetchAll(PDO::FETCH_COLUMN);
+	}
+
     public static function obtenerPedido($id)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();

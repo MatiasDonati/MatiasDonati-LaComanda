@@ -42,9 +42,6 @@ class PedidoController implements IApiUsable
             $productoPedido->precio = $productoDetalle->precio;
             $productoPedido->crearProductosPedidos();
 
-            // echo $productoNombre .PHP_EOL;
-            // echo $idProducto .PHP_EOL;
-
         }
     
         $payload = json_encode(array("mensaje" => "Pedido creado con éxito"));
@@ -124,7 +121,6 @@ class PedidoController implements IApiUsable
 
     public function ModificarUno($request, $response, $args)
     {
-        // $parametros = $request->getParsedBody();
         $id = $args['id'];
 
         $json = file_get_contents('php://input');
@@ -243,6 +239,7 @@ class PedidoController implements IApiUsable
                 }
             }
     
+
             $response->getBody()->write(json_encode(array(
                 "mensaje" => $tiemposDeProductos
             )));
@@ -254,10 +251,4 @@ class PedidoController implements IApiUsable
         }
     }
     
-
-    
-
-    
-
-
 }

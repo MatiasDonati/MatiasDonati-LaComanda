@@ -1,4 +1,5 @@
 <?php
+
 // Error Handling
 error_reporting(-1);
 ini_set('display_errors', 1);
@@ -13,13 +14,6 @@ use Slim\Routing\RouteContext;
 require __DIR__ . '/../vendor/autoload.php';
 
 require_once './db/AccesoDatos.php';
-// require_once './middlewares/Logger.php';
-
-
-// CREATE PDF // Paquete de composer para PDF
-// CREATE PDF // Paquete de composer para PDF
-// CREATE PDF // Paquete de composer para PDF
-
 
 require_once './controllers/UsuarioController.php';
 require_once './controllers/ProductoController.php';
@@ -27,15 +21,22 @@ require_once './controllers/MesaController.php';
 require_once './controllers/PedidoController.php';
 require_once './controllers/AuthController.php';
 require_once './controllers/ProductosPedidosController.php';
+require_once './controllers/EncuestaController.php';
 
 require_once './middlewares/UsuarioMiddleware.php';
 require_once './middlewares/PedidosMiddleware.php';
 require_once './middlewares/ModificarPedidosMiddleware.php';
 require_once './middlewares/MesaMiddleware.php';
-// require_once './middlewares/AuthMiddleware.php';
 
 require_once './utils/AutentificadorJWT.php';
 
+// CREATE PDF // Paquete de composer para PDF
+// CREATE PDF // Paquete de composer para PDF
+// CREATE PDF // Paquete de composer para PDF
+// CREATE PDF // Paquete de composer para PDF
+// CREATE PDF // Paquete de composer para PDF
+// CREATE PDF // Paquete de composer para PDF
+// CREATE PDF // Paquete de composer para PDF
 
 // Load ENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -77,7 +78,7 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
   $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware())->add(new RolMiddleware(['socio']));
-  $group->put('/{id}', \MesaController::class . ':ModificarUno')->add(new RolMiddleware(['mozo']));
+  $group->put('/{id}', \MesaController::class . ':ModificarUno')->add(new RolMiddleware(['mozo', 'socio']));
   $group->delete('/{id}', \MesaController::class . ':BorrarUno')->add(new RolMiddleware(['socio']));
 });
 
@@ -131,6 +132,12 @@ $app->get('/productosPedidos/tipo/{tipoDeProducto}', \ProductosPedidosController
 // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
 // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
 
+
+$app->group('/encuesta', function (RouteCollectorProxy $group) {
+	$group->post('[/]', \EncuestaController::class . ':CargarUno')->add(new EncuestaMiddleware())->add(new PedidoIdMiddleware());;
+	$group->get('[/]', \EncuestaController::class . ':TraerTodos');
+  $group->get('/mejoresComentarios', \EncuestaController::class . ':MejoresComentarios');
+});
 
 $app->get('[/]', function (Request $request, Response $response) {    
     $payload = json_encode(array("mensaje" => "Bienvenido a La Comanda!"));

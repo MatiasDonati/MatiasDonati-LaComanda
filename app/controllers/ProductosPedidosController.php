@@ -83,7 +83,6 @@ class ProductosPedidosController
 
     }
 
-
     public static function PrepararProducto($request, $response, $args)
     {
         $idPedido = $args['id'];
@@ -152,11 +151,11 @@ class ProductosPedidosController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $producto = ProductosPedidos::ObtenerProductosPorTipoPendiente($tipoProducto);
+        $productos = ProductosPedidos::ObtenerProductosEnPreparacion($tipoProducto);
 
         $productoEncontrado = false;
-        if ($producto) {
-            foreach ($producto as $item) {
+        if ($productos) {
+            foreach ($productos as $item) {
                 if ($item['id'] == $idPedido) {
                     $productoEncontrado = true;
                     break;

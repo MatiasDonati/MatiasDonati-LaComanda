@@ -7,14 +7,11 @@ class ProductosPedidos
     public $id;
     public $numeroDePedido;
     public $productoId;
-
     public $precio;
     public $empleadoACargo; 
     public $estado = 'pendiente';
     public $tiempoInicial;
-
     public $tiempoFinal = null;
-
     public $tiempoEstimado = null;
 
 
@@ -38,7 +35,6 @@ class ProductosPedidos
     
         return $objAccesoDatos->obtenerUltimoId();
     }
-    
 
     public static function TraerTodosLosProductosPedidos()
     {
@@ -70,7 +66,6 @@ class ProductosPedidos
         return $consulta->fetch(PDO::FETCH_OBJ);
     }
     
-
     public static function ObtenerUsuariosPorTipoDePedido($tipoDeProducto)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -96,8 +91,6 @@ class ProductosPedidos
         return $consulta->fetchObject('Usuario');
     }
 
-
-
     public static function ObtenerProductosPorTipo($tipoDeProducto)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -115,12 +108,6 @@ class ProductosPedidos
 
         return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    
- // ObtenerProductosPorTipoPendiente y ObtenerProductosEnPreparacion Me pa q no van mas 
- // ObtenerProductosPorTipoPendiente y ObtenerProductosEnPreparacion Me pa q no van mas 
- // ObtenerProductosPorTipoPendiente y ObtenerProductosEnPreparacion Me pa q no van mas 
- // ObtenerProductosPorTipoPendiente y ObtenerProductosEnPreparacion Me pa q no van mas 
 
     public static function ObtenerProductosPorTipoPendiente($tipoDeProducto)
     {
@@ -193,8 +180,6 @@ class ProductosPedidos
     }
     
 
-
-
     public static function PrepararProducto($id, $tiempoEstimado)
     {   
         $producto = self::ObtenerProductosPorId($id);
@@ -250,6 +235,4 @@ class ProductosPedidos
         return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }
     
-
-
 }
