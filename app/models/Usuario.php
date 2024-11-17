@@ -63,5 +63,16 @@ class Usuario
         $consulta->execute();
     }
 
+    public function registrarLog($idUsuario)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        
+        $consulta = $objAccesoDatos->PrepararConsulta("INSERT INTO usuariosLogs (idUsuario) VALUES (:idUsuario)");
+        $consulta->bindParam(':idUsuario', $idUsuario);
+        $consulta->execute();
+    }
+    
+
+
 }
 

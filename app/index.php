@@ -56,6 +56,7 @@ $app->addBodyParsingMiddleware();
 
 // Routes
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
+    $group->get('/obtenerIngresos', \UsuarioController::class . ':obtenerIngresos')->add(new RolMiddleware(['socio']));
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
     $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new RolMiddleware(['socio']));
