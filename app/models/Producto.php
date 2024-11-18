@@ -54,7 +54,6 @@ class Producto
     }
     
 
-
     public static function borrarProducto($id)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
@@ -64,6 +63,19 @@ class Producto
         $consulta->bindValue(':fechaBaja', $fecha->format('Y-m-d H:i:s'));
         $consulta->execute();
     }
+
+    public static function obtenerPrecio($id)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT precio FROM productos WHERE id = :id");
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+        $consulta->execute();
+    
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+    
+        return $resultado ? (float)$resultado['precio'] : null;
+    }
+    
     
 
 }

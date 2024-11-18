@@ -270,6 +270,31 @@ class ProductosPedidosController
         $response->getBody()->write(json_encode($mensaje));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200); // Código de éxito 200
     }
+
+    public static function ServirTodosProductosEnPreparacionPorTipo($request, $response, $args)
+    {
+        $tipoDeProducto = $args['tipo'];
+
+        if (!in_array($tipoDeProducto, ['trago', 'comida', 'cerveza'])) {
+            $mensaje = ["mensaje" => "Producto no válido."];
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $productos = ProductosPedidos::ObtenerProductosPorTipo($tipoDeProducto);
+
+        foreach ($productos as $producto) {
+            if ($producto['estado'] == 'en preparacion'){
+                ProductosPedidos::ListoParaServir($producto['id']);
+            };
+        }
+
+        $mensaje =  
+        ["mensaje" => "Todos los productos de tipo $tipoDeProducto, estan Listo Para Servir!"];
+
+        $response->getBody()->write(json_encode($mensaje));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
     
     
 }

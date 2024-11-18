@@ -3,6 +3,7 @@
 require_once './models/Pedido.php';
 require_once './interfaces/IApiUsable.php';
 require_once './models/ProductosPedidos.php';
+require_once './models/Producto.php';
 include_once(__DIR__ . '/../utils/Archivos.php');
 
 
@@ -245,4 +246,74 @@ class PedidoController implements IApiUsable
         }
     }
     
+
+    public static function VerSiElPedidoEstaCompletoParaServir($request, $response, $args)
+    {
+        $numeroDePedido = $args['numeroDePedido'];
+        $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
+    
+        $listoParaServir = true;
+    
+        foreach ($productos as $producto) {
+            if ($producto->estado !== "listo para servir") {
+                $listoParaServir = false;
+                break;
+            }
+        }
+    
+        if ($listoParaServir) {
+            $payload = json_encode(array("mensaje" => "Todos los productos del pedido $numeroDePedido están listos para servir."));
+        } else {
+            $payload = json_encode(array("mensaje" => "El pedido $numeroDePedido no está listo para servir. Hay productos 'en preparacion' o 'pendientes'."));
+        }
+    
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+
+    public static function TraerPedidoMasOMenosVendido($request, $response, $args)
+    {
+        $pedidos = Pedido::obtenerTodos();
+        $ventas = [];
+
+        foreach ($pedidos as $pedido) {
+            $prodPedidos = ProductosPedidos::ObtenerProductosPorPedido($pedido->numeroDePedido);
+            $totalPedido = 0;
+
+            foreach ($prodPedidos as $productos) {
+                $precioProducto = Producto::obtenerPrecio($productos->productoId);
+                $totalPedido += $precioProducto ? (float)$precioProducto : 0;
+            }
+
+            $ventas[] = [
+                'numeroDePedido' => $pedido->numeroDePedido,
+                'total' => $totalPedido
+            ];
+        }
+
+        $uri = $request->getUri()->getPath();
+        $esMasVendido = strpos($uri, 'masVendido') !== false;
+
+        usort($ventas, function ($a, $b) {
+            return $b['total'] <=> $a['total'];
+        });
+
+        $pedidoSeleccionado = $esMasVendido ? $ventas[0] : end($ventas);
+
+        $respuesta = [
+            'mensaje' => $esMasVendido ? 'Pedido con mayor venta' : 'Pedido con menor venta',
+            'pedido' => $pedidoSeleccionado
+        ];
+
+        $response->getBody()->write(json_encode($respuesta));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+
+    
+
+
+    
+
 }

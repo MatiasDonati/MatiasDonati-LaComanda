@@ -173,3 +173,38 @@ class CamposPedidosMiddleware
         return $handler->handle($request);
     }
 }
+class ValidarArchivoMiddleware
+{
+    private $nombreArchivo;
+
+    public function __construct(string $nombreArchivo)
+    {
+        $this->nombreArchivo = $nombreArchivo;
+    }
+
+    public function __invoke($request, $handler)
+    {
+		$response = new Response();
+        $uploadedFiles = $request->getUploadedFiles();
+
+        if (!isset($uploadedFiles[$this->nombreArchivo])) {
+            $payload = json_encode([
+                "mensaje" => "No se envió el archivo requerido: {$this->nombreArchivo}."
+            ]);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $archivo = $uploadedFiles[$this->nombreArchivo];
+        if ($archivo->getError() !== UPLOAD_ERR_OK) {
+            $payload = json_encode([
+                "mensaje" => "Hubo un error al cargar el archivo: {$this->nombreArchivo}."
+            ]);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        return $handler->handle($request);
+    }
+}
+
