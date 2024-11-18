@@ -133,13 +133,11 @@ $app->group('/productosPedidos', function ($group) {
   $group->get('/{numeroDePedido}', \ProductosPedidosController::class . ':ObtenerPorPedido');
   $group->get('/tipo/{tipoDeProducto}', \ProductosPedidosController::class . ':ObtenerProductosPorTipo');
 
+
+  // Estadisticas  --- en usuarios esta la parte del login de usuarios por fecha
   $group->get('/cantidadOperaciones/{tipoProducto}', \ProductosPedidosController::class . ':ObtenerCantidadDeOperacionesPorTipo');
-
   $group->get('/cantidadOperaciones/porEmpleado/{tipoProducto}', \ProductosPedidosController::class . ':ListarPorEmpleadoID');
-
-  // Listar por empleado ! 
-  // Listar por empleado ! 
-  // Listar por empleado ! 
+  $group->get('/cantidadOperaciones/porEmpleadoId/{idEmpleado}', \ProductosPedidosController::class . ':OperacionesUnEmpleadoId');
   
 });
 

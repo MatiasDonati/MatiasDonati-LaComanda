@@ -227,7 +227,7 @@ class ProductosPedidosController
     
         if ($empleadosPorRol) {
             foreach ($empleadosPorRol as $empleado) {
-                $prodPorEmpleado = ProductosPedidos::TraerProductosPorEmpleado($empleado->id); // Cambié $empleado a $empleado->id
+                $prodPorEmpleado = ProductosPedidos::TraerProductosPorEmpleado($empleado->id);
                 $cantidad = count($prodPorEmpleado);
 
                 $productosPorEmpleado[] = [
@@ -244,9 +244,32 @@ class ProductosPedidosController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
         }
     }
-    
-    
-    
-    
 
+    public static function OperacionesUnEmpleadoId($request, $response, $args)
+    {
+        $empleadoId = $args['idEmpleado'];
+    
+        if (!is_numeric($empleadoId)) {
+            $response->getBody()->write(json_encode(["mensaje" => "El id debe ser NUMERICO."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    
+        $empleado = Usuario::obtenerUsuarioPorId($empleadoId);
+        
+        if (!$empleado) {
+            $response->getBody()->write(json_encode(["mensaje" => "No se encontró el empleado con id: $empleadoId."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404); // Código de error 404 para no encontrado
+        }
+        
+        $nombreEmpleado = $empleado->usuario;
+        $prodPorEmpleado = ProductosPedidos::TraerProductosPorEmpleado($empleadoId);
+        $cantidad = count($prodPorEmpleado);
+    
+        $mensaje = ["mensaje" => "El empleado '$nombreEmpleado' - ID: $empleadoId - realizó $cantidad operaciones."];
+    
+        $response->getBody()->write(json_encode($mensaje));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200); // Código de éxito 200
+    }
+    
+    
 }

@@ -36,5 +36,3 @@ class CamposMiddleWare
         return $handler->handle($request)->withHeader('Content-Type', 'application/json');
     }
 }
-
-

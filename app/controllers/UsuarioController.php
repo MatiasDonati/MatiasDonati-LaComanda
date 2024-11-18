@@ -64,8 +64,6 @@ class UsuarioController extends Usuario implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
-    
-    
     public function BorrarUno($request, $response, $args)
     {
 
