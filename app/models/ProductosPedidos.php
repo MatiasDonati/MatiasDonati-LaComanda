@@ -217,8 +217,27 @@ class ProductosPedidos
         } else {
             return false;
         }
-
     }
+
+    public static function PonerTiempoFinalAProductoPedido($id)
+    {
+        $momentoAhora = date('Y-m-d H:i:s');
+    
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consultaUpdate = $objAccesoDatos->prepararConsulta(
+            "UPDATE productosPedidos SET tiempoFinal = :momentoAhora WHERE id = :id"
+        );
+        $consultaUpdate->bindValue(':momentoAhora', $momentoAhora, PDO::PARAM_STR);
+        $consultaUpdate->bindValue(':id', $id, PDO::PARAM_INT);
+
+        if ($consultaUpdate->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    
 
     public static function TraerProductosDeUnPedido($numeroDePedido)
     {

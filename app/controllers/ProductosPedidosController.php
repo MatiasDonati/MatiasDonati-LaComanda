@@ -165,9 +165,10 @@ class ProductosPedidosController
 
         if ($productoEncontrado) {
             $listoParaServir = ProductosPedidos::ListoParaServir($idPedido);
+            $tiempoProductoListo = ProductosPedidos::PonerTiempoFinalAProductoPedido($idPedido);
 
-            if ($listoParaServir) {
-                $mensaje = ["mensaje" => "El estado del pedido $idPedido se cambió a 'listo para servir'"];
+            if ($listoParaServir && $tiempoProductoListo) {
+                $mensaje = ["mensaje" => "El estado del pedido $idPedido se cambió a 'listo para servir' y se guardo el tiempo final."];
                 $response->getBody()->write(json_encode($mensaje));
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             }

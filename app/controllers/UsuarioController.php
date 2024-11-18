@@ -5,26 +5,6 @@ require_once './interfaces/IApiUsable.php';
 
 class UsuarioController extends Usuario implements IApiUsable
 {
-    // public function CargarUno($request, $response, $args)
-    // {
-    //     $parametros = $request->getParsedBody();
-    
-    //     $usuario = $parametros['usuario'];
-    //     $clave = $parametros['clave'];
-    //     $rol = $parametros['rol'];
-    
-    //     // Creamos el usuario
-    //     $usr = new Usuario();
-    //     $usr->usuario = $usuario;
-    //     $usr->clave = $clave;
-    //     $usr->rol = $rol;
-    //     $usr->crearUsuario();
-    
-    //     $payload = json_encode(array("mensaje" => "Usuario creado con exito"));
-    
-    //     $response->getBody()->write($payload);
-    //     return $response->withHeader('Content-Type', 'application/json');
-    // }  
 
     public function CargarUno($request, $response, $args)
     {
@@ -48,8 +28,6 @@ class UsuarioController extends Usuario implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
     
-
-
     public function TraerUno($request, $response, $args)
     {
         $usr = $args['usuario'];
@@ -90,7 +68,6 @@ class UsuarioController extends Usuario implements IApiUsable
     
     public function BorrarUno($request, $response, $args)
     {
-        // $parametros = $request->getParsedBody();
 
         $usuarioId = $args['id'];
         Usuario::borrarUsuario($usuarioId);
@@ -102,10 +79,6 @@ class UsuarioController extends Usuario implements IApiUsable
           ->withHeader('Content-Type', 'application/json');
     }
 
-    // consultas
-    // consultas
-    // consultas
-
     public static function obtenerIngresos($request, $response)
     {
       $parametros = $request->getQueryParams();
@@ -116,10 +89,6 @@ class UsuarioController extends Usuario implements IApiUsable
         $consulta = $objAccesoDatos->PrepararConsulta("SELECT u.usuario, l.timestamp FROM usuariosLogs l JOIN usuarios u ON l.idUsuario = u.id 
         WHERE DATE(l.timestamp) BETWEEN :fecha AND :fecha2 
         ORDER BY l.timestamp DESC");
-
-        // para que tome todo el dia
-        // $fecha1 = $parametros['fecha'] . ' 23:59:59';
-        // $fecha2 = $parametros['fecha2'] . ' 23:59:59';
 
         $consulta->bindParam(':fecha', $parametros['fecha']);
         $consulta->bindParam(':fecha2', $parametros['fecha2']);

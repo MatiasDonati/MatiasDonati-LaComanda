@@ -1,6 +1,9 @@
 <?php
 
 include_once(__DIR__ . '/../utils/Archivos.php');
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+
 
 class Mesa
 {
@@ -167,5 +170,52 @@ class Mesa
     
         return true;
     }
+
+    public function generarPDF($request, $response, $args)
+    {
+        $pdf = new TCPDF();
+    
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('La Comanda - Creador: Matias');
+        $pdf->SetTitle('Reporte de Mesas');
+        $pdf->SetHeaderData('', 0, 'La Comanda', 'Reporte de Mesas', array(0,64,255), array(0,64,128));
+        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+        $pdf->SetMargins(15, 27, 15);
+        $pdf->SetHeaderMargin(5);
+        $pdf->SetFooterMargin(10);
+        $pdf->SetAutoPageBreak(TRUE, 25);
+    
+        $pdf->AddPage();
+    
+        $rutaLogo = './db/LogoRestaurante.png';
+        $pdf->Image($rutaLogo, 175, 10, 30, 30, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        $pdf->Ln(10); //salto de linea
+
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM mesas");
+        $consulta->execute();
+        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    
+
+        $html = '<h1>Reporte de Mesas</h1>';
+        foreach ($resultados as $fila) {
+            $fila['fechaBaja'] === null ? $fila['fechaBaja'] = 'Se encuentra activa' : $fila['fechaBaja'];
+            $html .= '<p>ID: ' . $fila['id'] . '</p>';
+            $html .= '<p>Estado: ' . $fila['estado'] . '</p>';
+            $html .= '<p>Fecha de Baja (en caso de tenerla): ' . $fila['fechaBaja'] . '</p>';
+            $html .= '<p>Código de Identificación: ' . $fila['codigoDeIdentificacion'] . '</p>';
+            $html .= '<hr>';
+        }
+    
+        $pdf->writeHTML($html, true, false, true, false, '');
+    
+        $pdf->Output('reporte_mesas.pdf', 'D');
+    
+        return $response->withHeader('Content-Type', 'application/pdf');
+    }
+    
+    
+
     
 }

@@ -30,14 +30,6 @@ require_once './middlewares/MesaMiddleware.php';
 
 require_once './utils/AutentificadorJWT.php';
 
-// CREATE PDF // Paquete de composer para PDF
-// CREATE PDF // Paquete de composer para PDF
-// CREATE PDF // Paquete de composer para PDF
-// CREATE PDF // Paquete de composer para PDF
-// CREATE PDF // Paquete de composer para PDF
-// CREATE PDF // Paquete de composer para PDF
-// CREATE PDF // Paquete de composer para PDF
-
 // Load ENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
@@ -76,6 +68,8 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
 
   $group->post('/csv', \MesaController::class . ':SubirCsv')->add(new RolMiddleware(['socio']));
   $group->get('/csv', \MesaController::class . ':DescargarCsv')->add(new RolMiddleware(['socio']));
+  $group->get('/pdf', \MesaController::class . ':generarPDF')->add(new RolMiddleware(['socio']));
+
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
   $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware())->add(new RolMiddleware(['socio']));
