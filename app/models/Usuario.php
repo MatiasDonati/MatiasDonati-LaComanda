@@ -8,6 +8,8 @@ class Usuario
     public $rol;
     public $fechaBaja;
 
+    // public $suspendido;
+
     public function crearUsuario()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -95,6 +97,14 @@ class Usuario
         return $consulta->fetchObject('Usuario');
     }
     
+
+    public static function suspenderUsuarioPorId($id)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("UPDATE usuarios SET suspendido = TRUE WHERE id = :id");
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+        $consulta->execute();
+    }
 
 }
 

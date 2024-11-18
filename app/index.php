@@ -49,13 +49,16 @@ $app->addBodyParsingMiddleware();
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
 
     // Obtener ingreso de usuarios cuando se Ingresaron por fecha puntual o entre dos fechas..
-
     $group->get('/obtenerIngresos', \UsuarioController::class . ':obtenerIngresos');
+
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
     $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new UsuarioMiddleware(['usuario', 'clave', 'rol']));
     $group->put('/{id}', \UsuarioController::class . ':ModificarUno')->add(new UsuarioMiddleware(['usuario', 'clave', 'rol']));
     $group->delete('/{id}', \UsuarioController::class . ':BorrarUno');
+
+    $group->get('/suspender/{id}', \UsuarioController::class . ':suspenderUsuario')->add(new RolMiddleware(['socio']));
+
   })->add(new RolMiddleware(['socio']));
 
 $app->group('/productos', function (RouteCollectorProxy $group) {

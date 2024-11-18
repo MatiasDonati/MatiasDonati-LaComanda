@@ -66,7 +66,6 @@ class UsuarioController extends Usuario implements IApiUsable
     }
     public function BorrarUno($request, $response, $args)
     {
-
         $usuarioId = $args['id'];
         Usuario::borrarUsuario($usuarioId);
 
@@ -154,5 +153,20 @@ class UsuarioController extends Usuario implements IApiUsable
 
         return $response->withHeader('Content-Type', 'application/json');
     }
+
+    public static function suspenderUsuario($request, $response, $args)
+    {
+        $usuarioId = $args['id']; 
+        Usuario::suspenderUsuarioPorId($usuarioId);
+    
+        $payload = json_encode(array("mensaje" => "Usuario suspendido con éxito"));
+    
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+    
+
+    
 
 }
