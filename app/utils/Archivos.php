@@ -30,8 +30,7 @@ class Archivo
 	// Activar foto de mesa ! 
 	// Activar foto de mesa ! 
 	// Activar foto de mesa ! 
-	// Activar foto de mesa ! 
-
+	
 	public static function subirImagen($origen, $destino, $archivo)
 	{
 		if (!is_dir($destino))

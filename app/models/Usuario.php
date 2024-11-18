@@ -1,6 +1,5 @@
 <?php
 
-
 class Usuario
 {
     public $id;
@@ -71,8 +70,21 @@ class Usuario
         $consulta->bindParam(':idUsuario', $idUsuario);
         $consulta->execute();
     }
-    
 
+
+    public static function obtenerUsuariosPorRol($rol)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, usuario, clave, rol FROM usuarios WHERE rol = :rol");
+        
+        $consulta->bindParam(':rol', $rol, PDO::PARAM_STR);
+        
+        $consulta->execute();
+    
+        return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
+    }
+    
 
 }
 

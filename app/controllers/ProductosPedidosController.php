@@ -179,4 +179,74 @@ class ProductosPedidosController
         return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
     }
 
+    public static function ObtenerCantidadDeOperacionesPorTipo($request, $response, $args)
+    {
+        $tipoProducto = $args['tipoProducto'];
+    
+        if (!in_array($tipoProducto, ['trago', 'comida', 'cerveza'])) {
+            $mensaje = ["mensaje" => "Producto no válido."];
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    
+        $productos = ProductosPedidos::ObtenerProductosPorTipo($tipoProducto);
+    
+        if ($productos) {
+            $cantidad = count($productos);
+            $mensaje = "Se realizaron: '$cantidad' operaciones de productos de tipo: '$tipoProducto'";
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            $response->getBody()->write(json_encode(["mensaje" => "No se encontraron productos de tipo $tipoProducto"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+    }
+
+    public static function ListarPorEmpleadoID($request, $response, $args)
+    {
+        $productosPorEmpleado = [];
+    
+        $tipoProducto = $args['tipoProducto'];
+        switch ($tipoProducto) {
+            case 'trago':
+                $rol = 'bartender';
+                break;
+            case 'cerveza':
+                $rol = 'cervecero';
+                break;
+            case 'comida':
+                $rol = 'cocinero';
+                break;
+            default:
+                $mensaje = ["mensaje" => "Tipo de producto no válido."];
+                $response->getBody()->write(json_encode($mensaje));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    
+        $empleadosPorRol = Usuario::obtenerUsuariosPorRol($rol);
+    
+        if ($empleadosPorRol) {
+            foreach ($empleadosPorRol as $empleado) {
+                $prodPorEmpleado = ProductosPedidos::TraerProductosPorEmpleado($empleado->id); // Cambié $empleado a $empleado->id
+                $cantidad = count($prodPorEmpleado);
+
+                $productosPorEmpleado[] = [
+                    'Empleado' => $empleado->id,
+                    'Nombre' => $empleado->usuario,
+                    'Cantidad de Operaciones' => $cantidad
+                ];
+            }
+    
+            $response->getBody()->write(json_encode($productosPorEmpleado));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            $response->getBody()->write(json_encode(["mensaje" => "No se encontraron empleados para el rol $rol."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+    }
+    
+    
+    
+    
+
 }

@@ -253,5 +253,21 @@ class ProductosPedidos
     
         return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function TraerProductosPorEmpleado($idEmpleado)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "SELECT * FROM productosPedidos WHERE empleadoACargo = :idEmpleado"
+        );
+    
+        $consulta->bindValue(':idEmpleado', $idEmpleado, PDO::PARAM_INT);
+        $consulta->execute();
+    
+        $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    
+        return $resultados;
+    }
     
 }

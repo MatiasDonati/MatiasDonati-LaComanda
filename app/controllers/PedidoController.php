@@ -37,8 +37,8 @@ class PedidoController implements IApiUsable
             $idProducto = $productoDetalle->id;
             $productoPedido->productoId = $idProducto;
 
-            $empleadoACargo = ProductosPedidos::ObtenerUsuariosPorTipoDePedido($productoDetalle->tipo);
-            $productoPedido->empleadoACargo = $empleadoACargo->id;
+            $empleadoACargoRandom = ProductosPedidos::ObtenerUsuariosPorTipoDePedido($productoDetalle->tipo);
+            $productoPedido->empleadoACargo = $empleadoACargoRandom->id;
             $productoPedido->precio = $productoDetalle->precio;
             $productoPedido->crearProductosPedidos();
 
@@ -158,19 +158,14 @@ class PedidoController implements IApiUsable
     public static function TomarFoto($request,  $response)
     {
         $parametros = $request->getParsedBody();
-
         $numeroDePedido = $parametros['numeroDePedido'];
-        
         $pedido =  Pedido::obtenerPedidoPorNumeroDePedido($numeroDePedido);
-
         $foto = Archivo::GuardarArchivo("db/fotos/", "{$numeroDePedido}", 'foto', '.jpg');
 
         if($pedido && $foto){
 
             echo 'Tenemos pedido, tenemos foto para pedido!';
             echo Pedido::cargarFotoDb($numeroDePedido, $foto) ? 'Se Subio a la base dedatos' : 'Se Subio a la base dedatos';
-
-
         }
 
         $pedido->foto = $foto;

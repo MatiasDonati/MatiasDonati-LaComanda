@@ -47,6 +47,9 @@ $app->addBodyParsingMiddleware();
 
 // Routes
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
+
+    // Obtener ingreso de usuarios cuando se Ingresaron por fecha puntual o entre dos fechas..
+
     $group->get('/obtenerIngresos', \UsuarioController::class . ':obtenerIngresos');
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
@@ -75,6 +78,7 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
 });
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
+
   $group->post('/verPedidoDeUnaMesa', \PedidoController::class . ':VerPedidoDeMesa');
   $group->get('[/]', \PedidoController::class . ':TraerTodos');
   $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddlewareId());
@@ -128,6 +132,15 @@ $app->group('/productosPedidos', function ($group) {
 
   $group->get('/{numeroDePedido}', \ProductosPedidosController::class . ':ObtenerPorPedido');
   $group->get('/tipo/{tipoDeProducto}', \ProductosPedidosController::class . ':ObtenerProductosPorTipo');
+
+  $group->get('/cantidadOperaciones/{tipoProducto}', \ProductosPedidosController::class . ':ObtenerCantidadDeOperacionesPorTipo');
+
+  $group->get('/cantidadOperaciones/porEmpleado/{tipoProducto}', \ProductosPedidosController::class . ':ListarPorEmpleadoID');
+
+  // Listar por empleado ! 
+  // Listar por empleado ! 
+  // Listar por empleado ! 
+  
 });
 
 
