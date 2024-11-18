@@ -157,16 +157,17 @@ class UsuarioController extends Usuario implements IApiUsable
     public static function suspenderUsuario($request, $response, $args)
     {
         $usuarioId = $args['id']; 
-        Usuario::suspenderUsuarioPorId($usuarioId);
     
-        $payload = json_encode(array("mensaje" => "Usuario suspendido con éxito"));
-    
-        $response->getBody()->write($payload);
-        
-        return $response->withHeader('Content-Type', 'application/json');
+        if(Usuario::obtenerUsuarioPorId($usuarioId)){
+            Usuario::suspenderUsuarioPorId($usuarioId);
+            $payload = json_encode(array("mensaje" => "Usuario suspendido con éxito"));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
+        }else{
+            $payload = json_encode(array("mensaje" => "El usuario con ID $usuarioId no existe"));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
     }
-    
-
-    
 
 }
