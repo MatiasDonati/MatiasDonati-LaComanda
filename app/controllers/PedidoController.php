@@ -50,7 +50,6 @@ class PedidoController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
     
-    
     public function TraerUno($request, $response, $args)
     {
         $id = $args['id'];
@@ -134,7 +133,7 @@ class PedidoController implements IApiUsable
             $response->getBody()->write(json_encode(array("mensaje" => "Pedido modificado con éxito")));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } else {
-            $response->getBody()->write(json_encode(array("mensaje" => "No se pudo modificar el pedido")));
+            $response->getBody()->write(json_encode(array("mensaje" => "No se pudo modificar el pedido o ingreso el mismo estado.")));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }

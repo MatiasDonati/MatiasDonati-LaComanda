@@ -12,8 +12,8 @@ use Slim\Routing\RouteCollectorProxy;
 use Slim\Routing\RouteContext;
 
 require __DIR__ . '/../vendor/autoload.php';
-
 require_once './db/AccesoDatos.php';
+require_once './utils/AutentificadorJWT.php';
 
 require_once './controllers/UsuarioController.php';
 require_once './controllers/ProductoController.php';
@@ -25,10 +25,9 @@ require_once './controllers/EncuestaController.php';
 
 require_once './middlewares/UsuarioMiddleware.php';
 require_once './middlewares/PedidosMiddleware.php';
-require_once './middlewares/ModificarPedidosMiddleware.php';
 require_once './middlewares/MesaMiddleware.php';
-
-require_once './utils/AutentificadorJWT.php';
+require_once './middlewares/ProductosMiddleWare.php';
+require_once './middlewares/PreparacionProdMiddleware.php';
 
 // Load ENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -48,84 +47,88 @@ $app->addBodyParsingMiddleware();
 
 // Routes
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
-    $group->get('/obtenerIngresos', \UsuarioController::class . ':obtenerIngresos')->add(new RolMiddleware(['socio']));
+    $group->get('/obtenerIngresos', \UsuarioController::class . ':obtenerIngresos');
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
-    $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new RolMiddleware(['socio']));
-    $group->put('/{id}', \UsuarioController::class . ':ModificarUno');
-    $group->delete('/{id}', \UsuarioController::class . ':BorrarUno')->add(new RolMiddleware(['socio']));
-  });
+    $group->post('[/]', \UsuarioController::class . ':CargarUno')->add(new UsuarioMiddleware(['usuario', 'clave', 'rol']));
+    $group->put('/{id}', \UsuarioController::class . ':ModificarUno')->add(new UsuarioMiddleware(['usuario', 'clave', 'rol']));
+    $group->delete('/{id}', \UsuarioController::class . ':BorrarUno');
+  })->add(new RolMiddleware(['socio']));
 
 $app->group('/productos', function (RouteCollectorProxy $group) {
-  $group->get('[/]', \ProductoController::class . ':TraerTodos');
-  $group->get('/{nombre}', \ProductoController::class . ':TraerUno');
-  $group->post('[/]', \ProductoController::class . ':CargarUno');
-  $group->put('/{id}', \ProductoController::class . ':ModificarUno');
-  $group->delete('/{id}', \ProductoController::class . ':BorrarUno');
+  $group->get('[/]', \ProductoController::class . ':TraerTodos')->add(new RolMiddleware(['socio', 'mozo']));
+  $group->get('/{nombre}', \ProductoController::class . ':TraerUno')->add(new RolMiddleware(['socio', 'mozo']));
+  $group->post('[/]', \ProductoController::class . ':CargarUno')->add(new RolMiddleware(['socio', 'mozo']))->add(new CamposMiddleWare(['nombre', 'tipo', 'precio']));
+  $group->put('/{id}', \ProductoController::class . ':ModificarUno')->add(new RolMiddleware(['socio']))->add(new CamposMiddleWare(['nombre', 'tipo', 'precio']));
+  $group->delete('/{id}', \ProductoController::class . ':BorrarUno')->add(new RolMiddleware(['socio']));
 });
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
-
   $group->post('/csv', \MesaController::class . ':SubirCsv')->add(new RolMiddleware(['socio']));
   $group->get('/csv', \MesaController::class . ':DescargarCsv')->add(new RolMiddleware(['socio']));
   $group->get('/pdf', \MesaController::class . ':generarPDF')->add(new RolMiddleware(['socio']));
-
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
-  $group->post('[/]', \MesaController::class . ':CargarUno')->add(new MesaMiddleware())->add(new RolMiddleware(['socio']));
-  $group->put('/{id}', \MesaController::class . ':ModificarUno')->add(new RolMiddleware(['mozo', 'socio']));
+  $group->post('[/]', \MesaController::class . ':CargarUno')->add(new RolMiddleware(['socio']));
+  $group->put('/{id}', \MesaController::class . ':ModificarUno')->add(new RolMiddleware(['mozo', 'socio']))->add(new MesaMiddleware());
   $group->delete('/{id}', \MesaController::class . ':BorrarUno')->add(new RolMiddleware(['socio']));
 });
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
-
   $group->post('/verPedidoDeUnaMesa', \PedidoController::class . ':VerPedidoDeMesa');
-
   $group->get('[/]', \PedidoController::class . ':TraerTodos');
-  $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddleware());
-
-  $group->get('/numeroDePedido/{numeroDePedido}', \PedidoController::class . ':TraerUnoPorNumeroDePedido');
-  
-  // Agregar los MW
-  // Agregar los MW
-
+  $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddlewareId());
+  $group->get('/numeroDePedido/{numeroDePedido}', \PedidoController::class . ':TraerUnoPorNumeroDePedido')->add(new ConsultarPedidoMiddlewareNumeroDePedido());
   $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware())->add(new RolMiddleware(['mozo']));
-
-  $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new ModificarPedidosMiddleware())->add(new RolMiddleware(['mozo']));
-  $group->delete('/{id}', \PedidoController::class . ':BorrarUno');
-  $group->post('/tomarFoto', \PedidoController::class . ':TomarFoto')->add(new RolMiddleware(['mozo'])); 
-  
-  // Agregar MW para campos numeroPed y foto q no eaten vacios
-  // Agregar MW para campos numeroPed y foto q no eaten vacios
-
+  $group->put('/{id}', \PedidoController::class . ':ModificarUno')->add(new RolMiddleware(['mozo']))->add(new CamposPedidosMiddleware(['estado']));
+  $group->delete('/{id}', \PedidoController::class . ':BorrarUno')->add(new RolMiddleware(['mozo', 'socio']));
+  $group->post('/tomarFoto', \PedidoController::class . ':TomarFoto')->add(new RolMiddleware(['mozo']))->add(new CamposPedidosMiddleware(['numeroDePedido', 'foto'])); 
 });
 
-// AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
-// AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
+// // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
+// $app->get('/productosPedidos', \ProductosPedidosController::class . ':ObtenerTodos');
+// $app->get('/productosPedidos/comida', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero', 'socio']));
+// $app->get('/productosPedidos/trago', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender', 'socio']));
+// $app->get('/productosPedidos/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero', 'socio']));
+// // MAs dinamico 'pendiente', 'en preparacion' o 'listo para servir'
+// $app->get('/productosPedidos/trago/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender', 'socio']));
+// $app->get('/productosPedidos/cerveza/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero', 'socio']));
+// $app->get('/productosPedidos/comida/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero', 'socio']));
 
-$app->get('/productosPedidos', \ProductosPedidosController::class . ':ObtenerTodos');
-$app->get('/productosPedidos/comida', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero', 'socio']));
-$app->get('/productosPedidos/trago', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender', 'socio']));
-$app->get('/productosPedidos/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero', 'socio']));
+// $app->post('/productosPedidos/prepararTrago/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['bartender']));
+// $app->post('/productosPedidos/prepararComida/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cocinero']));
+// $app->post('/productosPedidos/prepararCerveza/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cervecero']));
 
-// MAs dinamico 'pendiente', 'en preparacion' o 'listo para servir'
-$app->get('/productosPedidos/trago/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender', 'socio']));
-$app->get('/productosPedidos/cerveza/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero', 'socio']));
-$app->get('/productosPedidos/comida/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero', 'socio']));
+// $app->get('/productosPedidos/listoParaServirTrago/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['bartender']));
+// $app->get('/productosPedidos/listoParaServirComida/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cocinero']));
+// $app->get('/productosPedidos/listoParaServirCerveza/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cervecero']));
 
-$app->post('/productosPedidos/prepararTrago/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['bartender']));
-$app->post('/productosPedidos/prepararComida/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cocinero']));
-$app->post('/productosPedidos/prepararCerveza/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cervecero']));
+// $app->get('/productosPedidos/{numeroDePedido}', \ProductosPedidosController::class . ':ObtenerPorPedido');
+// $app->get('/productosPedidos/tipo/{tipoDeProducto}', \ProductosPedidosController::class . ':ObtenerProductosPorTipo');
+// // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
 
-$app->get('/productosPedidos/listoParaServirTrago/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['bartender']));
-$app->get('/productosPedidos/listoParaServirComida/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cocinero']));
-$app->get('/productosPedidos/listoParaServirCerveza/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cervecero']));
+$app->group('/productosPedidos', function ($group) {
+  $group->get('[/]', \ProductosPedidosController::class . ':ObtenerTodos');
+  
+  $group->get('/comida', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero', 'socio']));
+  $group->get('/trago', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender', 'socio']));
+  $group->get('/cerveza', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero', 'socio']));
 
-$app->get('/productosPedidos/{numeroDePedido}', \ProductosPedidosController::class . ':ObtenerPorPedido');
-$app->get('/productosPedidos/tipo/{tipoDeProducto}', \ProductosPedidosController::class . ':ObtenerProductosPorTipo');
+  $group->get('/trago/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorTrago')->add(new RolMiddleware(['bartender', 'socio']));
+  $group->get('/cerveza/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorCerveza')->add(new RolMiddleware(['cervecero', 'socio']));
+  $group->get('/comida/{estado}', \ProductosPedidosController::class . ':ObtenerProductosPorComida')->add(new RolMiddleware(['cocinero', 'socio']));
 
-// AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
-// AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR // AGRUPAR 
+  $group->post('/prepararTrago/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['bartender']))->add(new PreparacionProdMiddleware());
+  $group->post('/prepararComida/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cocinero']))->add(new PreparacionProdMiddleware());
+  $group->post('/prepararCerveza/{id}', \ProductosPedidosController::class . ':PrepararProducto')->add(new RolMiddleware(['cervecero']))->add(new PreparacionProdMiddleware());
+
+  $group->get('/listoParaServirTrago/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['bartender']));
+  $group->get('/listoParaServirComida/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cocinero']));
+  $group->get('/listoParaServirCerveza/{id}', \ProductosPedidosController::class . ':ListoParaServir')->add(new RolMiddleware(['cervecero']));
+
+  $group->get('/{numeroDePedido}', \ProductosPedidosController::class . ':ObtenerPorPedido');
+  $group->get('/tipo/{tipoDeProducto}', \ProductosPedidosController::class . ':ObtenerProductosPorTipo');
+});
 
 
 $app->group('/encuesta', function (RouteCollectorProxy $group) {

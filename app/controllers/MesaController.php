@@ -46,18 +46,9 @@ class MesaController extends Mesa implements IApiUsable
         $estado = $parametros['estado'];
         $codigoDeIdentificacion = $parametros['codigoDeIdentificacion'];
     
-        $estadosValidos = ['con cliente esperando pedido', 'con cliente comiendo', 'con cliente pagando', 'cerrada'];
-    
-        // podria estar en MW de validaciones
-        // podria estar en MW de validaciones
-
-        if (!in_array($estado, $estadosValidos)) {
-            $response->getBody()->write(json_encode(["mensaje" => "El estado no existe.", "estados validos"=>"con cliente esperando pedido, con cliente comiendo, con cliente pagando y cerrada"]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
-        }
-    
         $rolUsuario = $request->getAttribute('rolUsuario');
         $mesaModificada = false;
+
     
         if ($rolUsuario === 'socio' && $estado === 'cerrada') {
             Mesa::modificarMesa($id, $codigoDeIdentificacion, $estado);

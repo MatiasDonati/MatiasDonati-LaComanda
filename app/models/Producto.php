@@ -41,15 +41,14 @@ class Producto
         return $consulta->fetchObject('Producto');
     }
 
-    public static function modificarProducto($id, $nombre, $tipo, $precio, $numeroDePedido)
+    public static function modificarProducto($id, $nombre, $tipo, $precio)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDato->prepararConsulta("UPDATE productos SET nombre = :nombre, tipo = :tipo, precio = :precio, numeroDePedido = :numeroDePedido WHERE id = :id");
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE productos SET nombre = :nombre, tipo = :tipo, precio = :precio WHERE id = :id");
         $consulta->bindValue(':id', $id, PDO::PARAM_INT);
         $consulta->bindValue(':nombre', $nombre, PDO::PARAM_STR);
         $consulta->bindValue(':tipo', $tipo, PDO::PARAM_STR);
         $consulta->bindValue(':precio', $precio, PDO::PARAM_STR);
-        $consulta->bindValue(':numeroDePedido', $numeroDePedido, PDO::PARAM_STR);
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Producto');
     }

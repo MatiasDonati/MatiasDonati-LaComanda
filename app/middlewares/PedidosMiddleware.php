@@ -31,8 +31,7 @@ class CrearPedidoMiddleware
     }
 }
 
-
-class ConsultarPedidoMiddleware
+class ConsultarPedidoMiddlewareId
 {
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
@@ -57,17 +56,34 @@ class ConsultarPedidoMiddleware
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
-
 }
 
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
+class ConsultarPedidoMiddlewareNumeroDePedido
+{
+    public function __invoke(Request $request, RequestHandler $handler): Response
+    {
+        $response = new Response();
+        $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
+        $routeArgs = $routeContext->getRoute()->getArguments();
+        $numerosDePedido = $routeArgs['numeroDePedido'] ?? null;
 
+        if ($numerosDePedido) {
+            $pedido = Pedido::obtenerPedidoPorNumeroDePedido($numerosDePedido);
 
+            if ($pedido) {
+                return $handler->handle($request);
+            } else {
+                $payload = json_encode(["mensaje" => "No existe Pedido con ese Numero de Pedido"]);
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+            }
+        } else {
+            $payload = json_encode(["mensaje" => "Numero de Pedido no proporcionado en la ruta"]);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    }
+}
 
 class PedidoIdMiddleware
 {	public function __invoke(Request $request, RequestHandler $handler): Response
@@ -91,57 +107,6 @@ class PedidoIdMiddleware
 		return $response->withHeader('Content-Type', 'application/json');
 	}
 }
-
-
-// class ProductoEnPedidoMiddleware
-// {	public function __invoke(Request $request, RequestHandler $handler): Response
-// 	{
-// 		$response = new Response();
-// 		$parametros = $request->getParsedBody();
-// 		$id_producto = $parametros['id_producto'];
-// 		$id_pedido = $parametros['id_pedido'];
-// 		$pedidoProducto = PedidoProductos::BuscarProductoEnPedido($id_producto, $id_pedido);
-
-// 		if (!empty($pedidoProducto)) {
-
-// 			$response = $handler->handle($request);
-
-// 		} else {
-// 			$payload = json_encode(array("mensaje" => "No existe ese Producto en el Pedido"));
-//             $response->getBody()->write($payload);
-// 		}
-
-
-// 		return $response->withHeader('Content-Type', 'application/json');
-// 	}
-
-// }
-
-
-// class FacturaIdMiddleware
-// {	public function __invoke(Request $request, RequestHandler $handler): Response
-// 	{
-// 		$response = new Response();
-// 		$params = $request->getParsedBody();
-// 		$ids = Factura::obtenerTodosId();
-// 		if (isset($params['id_factura'])) {
-// 			if (in_array($params['id_factura'], $ids)) {
-// 				$response = $handler->handle($request);
-// 			} else {
-// 				$payload = json_encode(array("mensaje" => "No existe Factura con ese ID"));
-//                 $response->getBody()->write($payload);
-// 			}
-// 		} else {
-// 			$payload = json_encode(array("mensaje" => "Falta ID Factura"));
-//             $response->getBody()->write($payload);
-// 		}
-
-
-// 		return $response->withHeader('Content-Type', 'application/json');
-// 	}
-
-// }
-
 
 class EncuestaMiddleware
 {
@@ -174,4 +139,37 @@ class EncuestaMiddleware
         return true;
     }
 
+}
+
+class CamposPedidosMiddleware
+{
+    private $camposRequeridos;
+
+    public function __construct(array $camposRequeridos)
+    {
+        $this->camposRequeridos = $camposRequeridos;
+    }
+
+    public function __invoke($request, $handler)
+    {
+        $params = $request->getParsedBody();
+        $camposFaltantes = [];
+
+        foreach ($this->camposRequeridos as $campo) {
+            if (!isset($params[$campo])) {
+                $camposFaltantes[] = $campo;
+            }
+        }
+
+        if (!empty($camposFaltantes)) {
+            $response = new \Slim\Psr7\Response();
+            $payload = json_encode([
+                "mensaje" => "Faltan campos requeridos: " . implode(", ", $camposFaltantes)
+            ]);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        return $handler->handle($request);
+    }
 }

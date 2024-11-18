@@ -52,11 +52,9 @@ class EncuestaController extends Encuesta
       $consulta = $objAccesoDatos->PrepararConsulta("SELECT *, (puntuacionMesa + puntuacionMozo + puntuacionRestaurante + puntuacionCocinero) AS puntuacionTotal
           FROM encuestas
           ORDER BY puntuacionTotal DESC
-          LIMIT 1");
+          LIMIT 3");
 
-          // Limite 1 para ver el mejor
-          // Limite 1 para ver el mejor
-          // Limite 1 para ver el mejor
+      // LIMIT = X  para obtener los que quiera 
 
       $consulta->execute();
       $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);

@@ -45,6 +45,16 @@ class Mesa
         return $consulta->fetchObject('Mesa');
     }
 
+    public static function obtenerMesaPorCodigoDeIdentificacion($codigoDeIdentificacion)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, codigoDeIdentificacion, estado FROM mesas WHERE codigoDeIdentificacion = :codigoDeIdentificacion");
+        $consulta->bindValue(':codigoDeIdentificacion', $codigoDeIdentificacion, PDO::PARAM_INT);
+        $consulta->execute();
+
+        return $consulta->fetchObject('Mesa');
+    }
+
     public static function modificarMesa($id, $codigoDeIdentificacion, $estado)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
@@ -176,7 +186,7 @@ class Mesa
         $pdf = new TCPDF();
     
         $pdf->SetCreator(PDF_CREATOR);
-        $pdf->SetAuthor('La Comanda - Creador: Matias');
+        $pdf->SetAuthor('La Comanda - Matias Donati');
         $pdf->SetTitle('Reporte de Mesas');
         $pdf->SetHeaderData('', 0, 'La Comanda', 'Reporte de Mesas', array(0,64,255), array(0,64,128));
         $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -189,8 +199,8 @@ class Mesa
         $pdf->AddPage();
     
         $rutaLogo = './db/LogoRestaurante.png';
-        $pdf->Image($rutaLogo, 175, 10, 30, 30, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-        $pdf->Ln(10); //salto de linea
+        $pdf->Image($rutaLogo, 170, 5, 30, 30, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        $pdf->Ln(15); //salto de linea
 
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM mesas");
@@ -203,7 +213,7 @@ class Mesa
             $fila['fechaBaja'] === null ? $fila['fechaBaja'] = 'Se encuentra activa' : $fila['fechaBaja'];
             $html .= '<p>ID: ' . $fila['id'] . '</p>';
             $html .= '<p>Estado: ' . $fila['estado'] . '</p>';
-            $html .= '<p>Fecha de Baja (en caso de tenerla): ' . $fila['fechaBaja'] . '</p>';
+            $html .= '<p>Fecha de Baja: ' . $fila['fechaBaja'] . '</p>';
             $html .= '<p>Código de Identificación: ' . $fila['codigoDeIdentificacion'] . '</p>';
             $html .= '<hr>';
         }
@@ -214,8 +224,5 @@ class Mesa
     
         return $response->withHeader('Content-Type', 'application/pdf');
     }
-    
-    
-
     
 }
