@@ -272,6 +272,19 @@ class Mesa
             return ["mensaje" => "No se pudo actualizar el estado de la mesa con ID $id."];
         }
     }
+
+    public static function obtenerIdMesaConCodigodeIdentificacion($codigoDeIdentificacion)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id FROM mesas WHERE codigoDeIdentificacion = :codigoDeIdentificacion");
+        $consulta->bindValue(':codigoDeIdentificacion', $codigoDeIdentificacion, PDO::PARAM_STR);
+        $consulta->execute();
+    
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+    
+        return $resultado ? $resultado['id'] : null;
+    }
+    
     
 
     

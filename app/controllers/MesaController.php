@@ -43,9 +43,11 @@ class MesaController extends Mesa implements IApiUsable
     public function ModificarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-        $id = $args['id'];
         $estado = $parametros['estado'] ?? null;
-    
+        $codigoMesa = $parametros['codigoDeIdentificacion'] ?? null;
+
+        $id = Mesa::obtenerIdMesaConCodigodeIdentificacion($codigoMesa);
+
         $rolUsuario = $request->getAttribute('rolUsuario');
         $mesaModificada = false;
     
@@ -67,7 +69,6 @@ class MesaController extends Mesa implements IApiUsable
         }
     }
     
-
     
     public function BorrarUno($request, $response, $args)
     {

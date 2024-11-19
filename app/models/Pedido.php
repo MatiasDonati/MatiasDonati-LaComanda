@@ -166,4 +166,18 @@ class Pedido
         return false;
     }
 
+    public static function obtenerMesaPorNumeroDePedido($numeroDePedido)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT mesaId FROM pedidos WHERE numeroDePedido = :numeroDePedido");
+        $consulta->bindValue(':numeroDePedido', $numeroDePedido, PDO::PARAM_STR);
+        $consulta->execute();
+    
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+    
+        // Devolver solo el valor de mesaId si existe
+        return $resultado ? $resultado['mesaId'] : null;
+    }
+    
+
 }

@@ -83,7 +83,9 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
   $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new RolMiddleware(['socio']));
   $group->get('/{id}', \MesaController::class . ':TraerUno');
   $group->post('[/]', \MesaController::class . ':CargarUno')->add(new RolMiddleware(['socio']));
-  $group->put('/{id}', \MesaController::class . ':ModificarUno')->add(new RolMiddleware(['mozo', 'socio']))->add(new MesaMiddleware());
+
+  $group->put('/modificarMesa', \MesaController::class . ':ModificarUno')->add(new RolMiddleware(['mozo', 'socio']))->add(new MesaMiddleware());
+
   $group->delete('/{id}', \MesaController::class . ':BorrarUno')->add(new RolMiddleware(['socio']));
 });
 
@@ -94,8 +96,6 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->get('/menosVendido', \PedidoController::class . ':TraerPedidoMasOMenosVendido');
 
   $group->post('/cobrarCuenta', \PedidoController::class . ':CobrarCuenta');
-
-
 
 
   $group->get('/noSeEntregaronEnTiempoEstipulado', \PedidoController::class . ':NoSeEntregaronEnTiempoEstupulado');
