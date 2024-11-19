@@ -179,7 +179,6 @@ class ProductosPedidos
         return $resultado ?: null;
     }
     
-
     public static function PrepararProducto($id, $tiempoEstimado)
     {   
         $producto = self::ObtenerProductosPorId($id);
@@ -218,18 +217,18 @@ class ProductosPedidos
             return false;
         }
     }
-
     public static function PonerTiempoFinalAProductoPedido($id)
     {
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
         $momentoAhora = date('Y-m-d H:i:s');
-    
+        
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consultaUpdate = $objAccesoDatos->prepararConsulta(
             "UPDATE productosPedidos SET tiempoFinal = :momentoAhora WHERE id = :id"
         );
         $consultaUpdate->bindValue(':momentoAhora', $momentoAhora, PDO::PARAM_STR);
         $consultaUpdate->bindValue(':id', $id, PDO::PARAM_INT);
-
+    
         if ($consultaUpdate->execute()) {
             return true;
         } else {
@@ -237,8 +236,6 @@ class ProductosPedidos
         }
     }
     
-    
-
     public static function TraerProductosDeUnPedido($numeroDePedido)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -269,5 +266,35 @@ class ProductosPedidos
     
         return $resultados;
     }
+
+    public static function CancelarProducto($id)
+    {
+        $estado = 'cancelado';
+        
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consultaUpdate = $objAccesoDatos->prepararConsulta(
+            "UPDATE productosPedidos SET estado = :estado WHERE id = :id"
+        );
+        $consultaUpdate->bindValue(':estado', $estado, PDO::PARAM_STR);
+        $consultaUpdate->bindValue(':id', $id, PDO::PARAM_INT);
+    
+        if ($consultaUpdate->execute()) {
+            return $consultaUpdate->rowCount() > 0;
+        } else {
+            return false;
+        }
+    }
+
+    public static function ObtenerProdPedidosCancelados()
+    {
+        $objetoAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objetoAccesoDato->prepararConsulta(
+            "SELECT * FROM productosPedidos WHERE estado = :estado"
+        );
+        $consulta->bindValue(':estado', 'cancelado', PDO::PARAM_STR);
+        $consulta->execute();
+        return $consulta->fetchAll(PDO::FETCH_CLASS, "ProductosPedidos");
+    }
+    
     
 }

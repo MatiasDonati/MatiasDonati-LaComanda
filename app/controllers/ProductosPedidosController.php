@@ -286,6 +286,7 @@ class ProductosPedidosController
         foreach ($productos as $producto) {
             if ($producto['estado'] == 'en preparacion'){
                 ProductosPedidos::ListoParaServir($producto['id']);
+                ProductosPedidos::PonerTiempoFinalAProductoPedido($producto['id']);
             };
         }
 

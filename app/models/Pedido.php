@@ -79,7 +79,6 @@ class Pedido
     
         return $consulta->fetchObject('Pedido');
     }
-    
 
     public static function modificarPedido($id, $estado)
     {
@@ -148,6 +147,25 @@ class Pedido
 
         return false; 
     }
+
+    public static function cancelarPedido($numeroDePedido)
+    {
+        $pedido = self::obtenerPedidoPorNumeroDePedido($numeroDePedido);
+    
+        if ($pedido) {
+            $estado = 'cancelado';
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            $consulta = $objAccesoDatos->prepararConsulta("UPDATE pedidos SET estado = :estado WHERE numeroDePedido = :numeroDePedido");
+            $consulta->bindValue(':estado', $estado, PDO::PARAM_STR);
+            $consulta->bindValue(':numeroDePedido', $numeroDePedido, PDO::PARAM_STR);
+            $consulta->execute();
+    
+            return $consulta->rowCount() > 0;
+        }
+    
+        return false;
+    }
+    
 
 
 }

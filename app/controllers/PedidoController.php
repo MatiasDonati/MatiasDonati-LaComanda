@@ -93,7 +93,6 @@ class PedidoController implements IApiUsable
         $response->getBody()->write(json_encode($payload));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
-    
 
     public function TraerTodos($request, $response, $args)
     {
@@ -118,7 +117,6 @@ class PedidoController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
-
     public function ModificarUno($request, $response, $args)
     {
         $id = $args['id'];
@@ -138,7 +136,6 @@ class PedidoController implements IApiUsable
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
-    
 
     public function BorrarUno($request, $response, $args)
     {
@@ -175,7 +172,6 @@ class PedidoController implements IApiUsable
 
         return $response->withHeader('Content-Type', 'application/json');
     }
-
 
     public static function VerPedidoDeMesa($request, $response, $args)
     {
@@ -246,7 +242,6 @@ class PedidoController implements IApiUsable
         }
     }
     
-
     public static function VerSiElPedidoEstaCompletoParaServir($request, $response, $args)
     {
         $numeroDePedido = $args['numeroDePedido'];
@@ -270,7 +265,6 @@ class PedidoController implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
-
 
     public static function TraerPedidoMasOMenosVendido($request, $response, $args)
     {
@@ -310,8 +304,162 @@ class PedidoController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    public static function NoSeEntregaronEnTiempoEstupulado($request, $response, $args)
+    {
+        $pedidos = Pedido::obtenerTodos();
+        $resultados = [];
+    
+        foreach ($pedidos as $pedido) {
+            $productosPorPedido = ProductosPedidos::TraerProductosDeUnPedido($pedido->numeroDePedido);
+    
+            foreach ($productosPorPedido as $producto) {
+                if (
+                    $producto['tiempoEstimado'] !== null &&
+                    $producto['tiempoInicial'] !== null &&
+                    $producto['tiempoFinal'] !== null
+                ) {
+                    $tiempoInicial = new DateTime($producto['tiempoInicial']);
+                    $tiempoFinal = new DateTime($producto['tiempoFinal']);
+                    $tiempoEstimado = (int)$producto['tiempoEstimado'];
+    
+                    if ($tiempoFinal < $tiempoInicial) {
+                        $tiempoFinal->modify('+1 day');
+                    }
+                    //segundos a minutios
+                    $tiempoQueTardo = ($tiempoFinal->getTimestamp() - $tiempoInicial->getTimestamp()) / 60;
+                    $tiempoQueTardo = round($tiempoQueTardo, 2);
+
+                    $resultados[] = [
+                        'numeroDePedido' => $pedido->numeroDePedido,
+                        'tiempoInicial' => $producto['tiempoInicial'],
+                        'tiempoFinal' => $producto['tiempoFinal'],
+                        'tiempoEstimadoOriginal' => $producto['tiempoEstimado'],
+                        'tiempoQueTardo' => round($tiempoQueTardo, 2),
+                        'demora' => $tiempoQueTardo > $tiempoEstimado ? 'Fuera de tiempo' : 'A tiempo',
+                    ];
+                }
+            }
+        }
+    
+        $response->getBody()->write(json_encode($resultados));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public static function CalcularTiemposPorPedido($request, $response, $args)
+    {
+        $pedidos = Pedido::obtenerTodos();
+        $resultados = [];
+
+        foreach ($pedidos as $pedido) {
+            $productosPorPedido = ProductosPedidos::TraerProductosDeUnPedido($pedido->numeroDePedido);
+
+            if (count($productosPorPedido) > 0) {
+                $tiempoInicialMasTemprano = null;
+                $tiempoFinalMasTarde = null;
+                $tiempoEstimadoMayor = 0;
+
+                foreach ($productosPorPedido as $producto) {
+                    if (
+                        $producto['tiempoEstimado'] !== null &&
+                        $producto['tiempoInicial'] !== null &&
+                        $producto['tiempoFinal'] !== null
+                    ) {
+                        $tiempoInicial = new DateTime($producto['tiempoInicial']);
+                        $tiempoFinal = new DateTime($producto['tiempoFinal']);
+                        $tiempoEstimado = (int)$producto['tiempoEstimado'];
+
+                        if ($tiempoFinal < $tiempoInicial) {
+                            $tiempoFinal->modify('+1 day');
+                        }
+
+                        if ($tiempoInicialMasTemprano === null || $tiempoInicial < $tiempoInicialMasTemprano) {
+                            $tiempoInicialMasTemprano = $tiempoInicial;
+                        }
+
+                        if ($tiempoFinalMasTarde === null || $tiempoFinal > $tiempoFinalMasTarde) {
+                            $tiempoFinalMasTarde = $tiempoFinal;
+                        }
+
+                        if ($tiempoEstimado > $tiempoEstimadoMayor) {
+                            $tiempoEstimadoMayor = $tiempoEstimado;
+                        }
+                    }
+                }
+
+                if ($tiempoInicialMasTemprano && $tiempoFinalMasTarde) {
+                    $tiempoQueTardo = ($tiempoFinalMasTarde->getTimestamp() - $tiempoInicialMasTemprano->getTimestamp()) / 60;
+                    $tiempoQueTardo = round($tiempoQueTardo, 2);
+
+                    $resultados[] = [
+                        'numeroDePedido' => $pedido->numeroDePedido,
+                        'tiempoInicialMasTemprano' => $tiempoInicialMasTemprano->format('Y-m-d H:i:s'),
+                        'tiempoFinalMasTarde' => $tiempoFinalMasTarde->format('Y-m-d H:i:s'),
+                        'tiempoEstimadoMayor' => $tiempoEstimadoMayor,
+                        'tiempoQueTardo' => $tiempoQueTardo,
+                        'demora' => $tiempoQueTardo > $tiempoEstimadoMayor ? 'Fuera de tiempo' : 'A tiempo',
+                    ];
+                }
+            }
+        }
+
+        $response->getBody()->write(json_encode($resultados));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public static function CancelarPedido($request, $response, $args)
+    {
+        $datos = $request->getParsedBody();
+        $numeroDePedido = $datos['numeroDePedido'] ?? null;
+    
+        if (!$numeroDePedido) {
+            $response->getBody()->write(json_encode(["mensaje" => "Numero de pedido no cargado."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    
+        $pedido = Pedido::obtenerPedidoPorNumeroDePedido($numeroDePedido);
+    
+        if (!$pedido) {
+            $response->getBody()->write(json_encode(["mensaje" => "El pedido no existe."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+    
+        $resultado = Pedido::cancelarPedido($numeroDePedido);
+        $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
+        foreach($productos as $producto){
+            if($producto){
+                echo $producto->id.PHP_EOL;
+                ProductosPedidos::CancelarProducto($producto->id);
+            }
+        }
 
     
+        if ($resultado) {
+            $response->getBody()->write(json_encode(["mensaje" => "Pedido cancelado correctamente."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            $response->getBody()->write(json_encode(["mensaje" => "No se pudo cancelar el pedido o Ya se encuentra cancelado."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+    }
+    
+    public static function VerPedidosCancelados($request, $response, $args)
+    {
+        $prodPedidosCancelados = ProductosPedidos::ObtenerProdPedidosCancelados();
+
+        $response->getBody()->write(json_encode(["productos pedidods cancelados" => $prodPedidosCancelados]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+
+    }
+    
+
+
+
+    
+    
+    
+
+
+
 
 
     

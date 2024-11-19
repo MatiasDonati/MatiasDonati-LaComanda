@@ -85,14 +85,14 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->post('/verPedidoDeUnaMesa', \PedidoController::class . ':VerPedidoDeMesa');
   $group->get('/masVendido', \PedidoController::class . ':TraerPedidoMasOMenosVendido');
   $group->get('/menosVendido', \PedidoController::class . ':TraerPedidoMasOMenosVendido');
-/////////////
-/////////////
-/////////////
- ////// LOS QUE NO SE ENTREGARON EN TIEMPO ESTIPULADO ..........HACER LAS CUENTAS !
- ////// LOS QUE NO SE ENTREGARON EN TIEMPO ESTIPULADO ..........HACER LAS CUENTAS !
-/////////////
-/////////////
-/////////////
+
+
+  $group->get('/noSeEntregaronEnTiempoEstipulado', \PedidoController::class . ':NoSeEntregaronEnTiempoEstupulado');
+  $group->get('/noSeEntregaronEnTiempoEstipuladoPedidoEntero', \PedidoController::class . ':CalcularTiemposPorPedido');
+
+  $group->post('/cancelar', \PedidoController::class . ':CancelarPedido');
+  $group->get('/verPedidosCancelados', \PedidoController::class . ':VerPedidosCancelados');
+
 
   $group->get('/verSiEstaListoParaServir/{numeroDePedido}', \PedidoController::class . ':VerSiElPedidoEstaCompletoParaServir');
   $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddlewareId());
