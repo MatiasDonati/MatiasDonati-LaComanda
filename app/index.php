@@ -104,8 +104,9 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->post('/cancelar', \PedidoController::class . ':CancelarPedido');
   $group->get('/verPedidosCancelados', \PedidoController::class . ':VerPedidosCancelados');
 
-
   $group->get('/verSiEstaListoParaServir/{numeroDePedido}', \PedidoController::class . ':VerSiElPedidoEstaCompletoParaServir');
+  $group->get('/verPedidosListosParaServor', \PedidoController::class . ':VerPedidosParaServir');
+
   $group->get('/{id}', \PedidoController::class . ':TraerUno')->add(new ConsultarPedidoMiddlewareId());
   $group->get('/numeroDePedido/{numeroDePedido}', \PedidoController::class . ':TraerUnoPorNumeroDePedido')->add(new ConsultarPedidoMiddlewareNumeroDePedido());
   $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new CrearPedidoMiddleware())->add(new RolMiddleware(['mozo']));

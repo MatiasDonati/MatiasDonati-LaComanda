@@ -485,18 +485,55 @@ class PedidoController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
     
+
+
+    public static function VerPedidosParaServir($request, $response, $args)
+    {
+        $pedidos = Pedido::obtenerTodos();
+        $pedidosListosParaServir = [];
     
-
-
-
+        foreach ($pedidos as $pedido) {
+            $numeroDePedido = $pedido->numeroDePedido;
+            $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
     
+            //Los que cree antes que estan sin productos los salteo
+            //Los que cree antes que estan sin productos los salteo
+            if (empty($productos)) {
+                continue;
+            }
     
+            $listoParaServir = true;
     
-
-
-
-
-
+            foreach ($productos as $producto) {
+                if ($producto->estado !== "listo para servir") {
+                    $listoParaServir = false;
+                    break;
+                }
+            }
     
-
+            if ($listoParaServir) {
+                $codigoDeMesa = ProductosPedidos::ObtenerMesaPorNumeroDePedido($numeroDePedido);
+                $pedidosListosParaServir[] = [
+                    "numeroDePedido" => $numeroDePedido,
+                    "mesa" => $codigoDeMesa,
+                    "productos" => $productos
+                ];
+            }
+        }
+    
+        if (count($pedidosListosParaServir) > 0) {
+            $payload = json_encode([
+                "mensaje" => "Pedidos listos para servir",
+                "pedidos" => $pedidosListosParaServir
+            ]);
+        } else {
+            $payload = json_encode([
+                "mensaje" => "No hay pedidos listos para servir."
+            ]);
+        }
+    
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+    
 }
