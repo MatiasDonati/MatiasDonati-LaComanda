@@ -70,6 +70,13 @@ $app->group('/productos', function (RouteCollectorProxy $group) {
 });
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
+
+  $group->get('/masUsada', \MesaController::class . ':ObtenerMesaMasUsada');
+  $group->get('/menosUsada', \MesaController::class . ':ObtenerMesaMasUsada');
+
+  $group->get('/laQueMasFacturo', \MesaController::class . ':MesaQueMasoMenosFacturo');
+  $group->get('/laQueMenosFacturo', \MesaController::class . ':MesaQueMasoMenosFacturo');
+
   $group->post('/csv', \MesaController::class . ':SubirCsv')->add(new RolMiddleware(['socio']));
   $group->get('/csv', \MesaController::class . ':DescargarCsv')->add(new RolMiddleware(['socio']));
   $group->get('/pdf', \MesaController::class . ':generarPDF')->add(new RolMiddleware(['socio']));
@@ -85,6 +92,10 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
   $group->post('/verPedidoDeUnaMesa', \PedidoController::class . ':VerPedidoDeMesa');
   $group->get('/masVendido', \PedidoController::class . ':TraerPedidoMasOMenosVendido');
   $group->get('/menosVendido', \PedidoController::class . ':TraerPedidoMasOMenosVendido');
+
+  $group->post('/cobrarCuenta', \PedidoController::class . ':CobrarCuenta');
+
+
 
 
   $group->get('/noSeEntregaronEnTiempoEstipulado', \PedidoController::class . ':NoSeEntregaronEnTiempoEstupulado');
@@ -130,7 +141,9 @@ $app->group('/productosPedidos', function ($group) {
 
 
   // SERVIR TODOS LOS QUE ESTEN EN "en preparacion"
-  $group->get('/servirTodosProductosEnPreparacion/{tipo}', \ProductosPedidosController::class . ':ServirTodosProductosEnPreparacionPorTipo');
+  $group->get('/servirTodosProductosEnPreparacion/{tipo}', \ProductosPedidosController::class . ':ServirTodosProductosEnPreparacionPorTipo')->add(new RolMiddleware(['cervecero', 'cocinero', 'bartender']));
+  
+  $group->put('/prepararPendientes/{tipo}', \ProductosPedidosController::class . ':PrepararTodosLosPendientes')->add(new RolMiddleware(['cervecero', 'cocinero', 'bartender']));
 
 
   // Estadisticas  --- en usuarios esta la parte del login de usuarios por fecha y suspender.
@@ -141,10 +154,12 @@ $app->group('/productosPedidos', function ($group) {
 
 
 $app->group('/encuesta', function (RouteCollectorProxy $group) {
-	$group->post('[/]', \EncuestaController::class . ':CargarUno')->add(new EncuestaMiddleware())->add(new PedidoIdMiddleware());;
-	$group->get('[/]', \EncuestaController::class . ':TraerTodos');
-  $group->get('/mejoresComentarios', \EncuestaController::class . ':MejoresComentarios');
+  $group->post('[/]', \EncuestaController::class . ':CargarUno')->add(new EncuestaMiddleware())->add(new PedidoIdMiddleware());
+  $group->get('[/]', \EncuestaController::class . ':TraerTodos');
+  $group->get('/mejoresComentarios', \EncuestaController::class . ':Comentarios');
+  $group->get('/peoresComentarios', \EncuestaController::class . ':Comentarios');
 });
+
 
 $app->get('[/]', function (Request $request, Response $response) {    
     $payload = json_encode(array("mensaje" => "Bienvenido a La Comanda!"));

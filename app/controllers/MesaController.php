@@ -1,5 +1,6 @@
 <?php
 require_once './models/Mesa.php';
+require_once './models/Pedido.php';
 require_once './interfaces/IApiUsable.php';
 
 class MesaController extends Mesa implements IApiUsable
@@ -43,18 +44,16 @@ class MesaController extends Mesa implements IApiUsable
     {
         $parametros = $request->getParsedBody();
         $id = $args['id'];
-        $estado = $parametros['estado'];
-        $codigoDeIdentificacion = $parametros['codigoDeIdentificacion'];
+        $estado = $parametros['estado'] ?? null;
     
         $rolUsuario = $request->getAttribute('rolUsuario');
         $mesaModificada = false;
-
     
         if ($rolUsuario === 'socio' && $estado === 'cerrada') {
-            Mesa::modificarMesa($id, $codigoDeIdentificacion, $estado);
+            Mesa::ModificarEstado($id, $estado);
             $mesaModificada = true;
-        } elseif ($rolUsuario === 'mozo' && ($estado === 'con cliente esperando pedido' || $estado === 'con cliente comiendo' || $estado === 'con cliente pagando')) {
-            Mesa::modificarMesa($id, $codigoDeIdentificacion, $estado);
+        } elseif ($rolUsuario === 'mozo' && in_array($estado, ['con cliente esperando pedido', 'con cliente comiendo', 'con cliente pagando'])) {
+            Mesa::ModificarEstado($id, $estado);
             $mesaModificada = true;
         }
     
@@ -68,6 +67,7 @@ class MesaController extends Mesa implements IApiUsable
         }
     }
     
+
     
     public function BorrarUno($request, $response, $args)
     {
@@ -93,7 +93,6 @@ class MesaController extends Mesa implements IApiUsable
       return $response->withHeader('Content-Type', 'application/json');
     }
 
-    
     public static function DescargarCsv($request, $response)
     {
       $request->getParsedBody();
@@ -118,4 +117,96 @@ class MesaController extends Mesa implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
       }
     }
+
+    public static function ObtenerMesaMasUsada($request, $response, $args)
+    {
+        $ruta = $request->getUri()->getPath(); 
+        $tipo = strpos($ruta, 'menosUsada') !== false ? 'menosUsada' : 'masUsada';
+    
+        $pedidos = Pedido::obtenerTodos();
+        $contadorMesas = [];
+    
+        foreach ($pedidos as $pedido) {
+            if (!empty($pedido->mesaId)) {
+                if (!isset($contadorMesas[$pedido->mesaId])) {
+                    $contadorMesas[$pedido->mesaId] = 0;
+                }
+                $contadorMesas[$pedido->mesaId]++;
+            }
+        }
+    
+        if (empty($contadorMesas)) {
+            $response->getBody()->write(json_encode([
+                'mensaje' => 'No se encontraron mesas usadas.',
+            ]));
+            return $response->withHeader('Content-Type', 'application/json');
+        }
+    
+        if ($tipo === 'masUsada') {
+            $mesaUsada = array_keys($contadorMesas, max($contadorMesas))[0];
+            $usos = $contadorMesas[$mesaUsada];
+        } else {
+            $mesaUsada = array_keys($contadorMesas, min($contadorMesas))[0];
+            $usos = $contadorMesas[$mesaUsada];
+        }
+    
+        $response->getBody()->write(json_encode([
+            'mesaId' => $mesaUsada,
+            'usos' => $usos,
+        ]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public static function MesaQueMasoMenosFacturo($request, $response, $args)
+    {
+        $pedidos = Pedido::obtenerTodos();
+        $facturacionPorMesa = [];
+    
+        foreach ($pedidos as $pedido) {
+            $prodPedidos = ProductosPedidos::ObtenerProductosPorPedido($pedido->numeroDePedido);
+            $totalPedido = 0;
+    
+            foreach ($prodPedidos as $productos) {
+                $precioProducto = Producto::obtenerPrecio($productos->productoId);
+                $totalPedido += $precioProducto ? (float)$precioProducto : 0;
+            }
+    
+            if (!isset($facturacionPorMesa[$pedido->mesaId])) {
+                $facturacionPorMesa[$pedido->mesaId] = 0;
+            }
+            $facturacionPorMesa[$pedido->mesaId] += $totalPedido;
+        }
+    
+        $uri = $request->getUri()->getPath();
+        $esMasFacturo = strpos($uri, 'laQueMasFacturo') !== false;
+    
+        uasort($facturacionPorMesa, function ($a, $b) {
+            return $b <=> $a; 
+        });
+    
+        if ($esMasFacturo) {
+            $mesaSeleccionada = array_key_first($facturacionPorMesa);
+            $facturacionSeleccionada = $facturacionPorMesa[$mesaSeleccionada];
+        } else {
+            $mesaSeleccionada = array_key_last($facturacionPorMesa);
+            $facturacionSeleccionada = $facturacionPorMesa[$mesaSeleccionada];
+        }
+        $respuesta = [
+            'mensaje' => $esMasFacturo ? 'Mesa que más facturó' : 'Mesa que menos facturó',
+            'mesaId' => $mesaSeleccionada,
+            'totalFacturado' => $facturacionSeleccionada,
+        ];
+    
+        $response->getBody()->write(json_encode($respuesta));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public static function FacturacionMesaPorFechas($request, $response, $args)
+    {
+        
+    }
+
+
+    
+
 }

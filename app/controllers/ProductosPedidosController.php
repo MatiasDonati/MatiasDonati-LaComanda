@@ -275,6 +275,20 @@ class ProductosPedidosController
     {
         $tipoDeProducto = $args['tipo'];
 
+        $rolUsuario = $request->getAttribute('rolUsuario');
+
+        $mapaRoles = [
+            'cervecero' => 'cerveza',
+            'bartender' => 'trago',
+            'cocinero' => 'comida'
+        ];
+
+        if (!isset($mapaRoles[$rolUsuario]) || $mapaRoles[$rolUsuario] !== $tipoDeProducto) {
+            $mensaje = ["mensaje" => "Acción no permitida para el rol '$rolUsuario' con el tipo de producto '$tipoDeProducto'."];
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
         if (!in_array($tipoDeProducto, ['trago', 'comida', 'cerveza'])) {
             $mensaje = ["mensaje" => "Producto no válido."];
             $response->getBody()->write(json_encode($mensaje));
@@ -284,18 +298,68 @@ class ProductosPedidosController
         $productos = ProductosPedidos::ObtenerProductosPorTipo($tipoDeProducto);
 
         foreach ($productos as $producto) {
-            if ($producto['estado'] == 'en preparacion'){
+            if ($producto['estado'] === 'en preparacion') {
                 ProductosPedidos::ListoParaServir($producto['id']);
                 ProductosPedidos::PonerTiempoFinalAProductoPedido($producto['id']);
-            };
+            }
         }
 
-        $mensaje =  
-        ["mensaje" => "Todos los productos de tipo $tipoDeProducto, estan Listo Para Servir!"];
-
+        $mensaje = ["mensaje" => "Todos los productos de tipo $tipoDeProducto están listos para servir."];
         $response->getBody()->write(json_encode($mensaje));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
+
+    public static function PrepararTodosLosPendientes($request, $response, $args)
+    {
+        $tipoDeProducto = $args['tipo'];
+
+        $rolUsuario = $request->getAttribute('rolUsuario');
+        $mapaRoles = [
+            'cervecero' => 'cerveza',
+            'bartender' => 'trago',
+            'cocinero' => 'comida'
+        ];
+
+        if (!isset($mapaRoles[$rolUsuario]) || $mapaRoles[$rolUsuario] !== $tipoDeProducto) {
+            $mensaje = ["mensaje" => "Acción no permitida para el rol '$rolUsuario' con el tipo de producto '$tipoDeProducto'."];
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        if (!in_array($tipoDeProducto, ['trago', 'comida', 'cerveza'])) {
+            $mensaje = ["mensaje" => "Producto no válido."];
+            $response->getBody()->write(json_encode($mensaje));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $productos = ProductosPedidos::ObtenerProductosPorTipo($tipoDeProducto);
+
+        ///// tiempo hardcodeado para poner todos justo y preparar todos 
+        ///// tiempo hardcodeado para poner todos justo y preparar todos 
+
+        $tiempoEstimado = 10;
+        $actualizados = 0;
+
+        foreach ($productos as $producto) {
+            if ($producto['estado'] === 'pendiente') {
+                ProductosPedidos::ActualizarEstado($producto['id'], 'en preparacion');
+                ProductosPedidos::AsignarTiempoEstimado($producto['id'], $tiempoEstimado);
+
+                $actualizados++;
+            }
+        }
+        if ($actualizados > 0) {
+            $mensaje = ["mensaje" => "Se prepararon $actualizados productos de tipo $tipoDeProducto."];
+            $status = 200;
+        } else {
+            $mensaje = ["mensaje" => "No se encontraron productos pendientes para el tipo $tipoDeProducto."];
+            $status = 404;
+        }
+
+        $response->getBody()->write(json_encode($mensaje));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus($status);
+    }
+
     
     
 }

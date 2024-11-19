@@ -42,27 +42,33 @@ class EncuestaController extends Encuesta
           ->withHeader('Content-Type', 'application/json');
     }
   
-
-    public static function MejoresComentarios($request, $response)
+    public static function Comentarios($request, $response)
     {
-      $parametros = $request->getQueryParams();
-      $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $ruta = $request->getUri()->getPath();
+        $esMejor = strpos($ruta, 'mejoresComentarios') !== false;
+    
+        $order = $esMejor ? 'DESC' : 'ASC';
 
-      
-      $consulta = $objAccesoDatos->PrepararConsulta("SELECT *, (puntuacionMesa + puntuacionMozo + puntuacionRestaurante + puntuacionCocinero) AS puntuacionTotal
-          FROM encuestas
-          ORDER BY puntuacionTotal DESC
-          LIMIT 3");
-
-      // LIMIT = X  para obtener los que quiera 
-
-      $consulta->execute();
-      $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
-      $response->getBody()->write(json_encode($resultado));
-
-      
-      return $response->withHeader('Content-Type', 'application/json');
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->PrepararConsulta(
+            "SELECT *, 
+            (puntuacionMesa + puntuacionMozo + puntuacionRestaurante + puntuacionCocinero) AS puntuacionTotal
+            FROM encuestas
+            ORDER BY puntuacionTotal $order
+            LIMIT 2"
+        );
+    
+        $consulta->execute();
+        $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+    
+        $mensaje = $esMejor ? 'Mejores comentarios' : 'Peores comentarios';
+    
+        $response->getBody()->write(json_encode([
+            'mensaje' => $mensaje,
+            'resultados' => $resultado,
+        ]));
+    
+        return $response->withHeader('Content-Type', 'application/json');
     }
-
-
+    
 }

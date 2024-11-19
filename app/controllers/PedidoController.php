@@ -4,6 +4,7 @@ require_once './models/Pedido.php';
 require_once './interfaces/IApiUsable.php';
 require_once './models/ProductosPedidos.php';
 require_once './models/Producto.php';
+require_once './models/Mesa.php';
 include_once(__DIR__ . '/../utils/Archivos.php');
 
 
@@ -28,6 +29,8 @@ class PedidoController implements IApiUsable
         $pedido->cliente = $cliente; 
 
         $pedido->crearPedido();
+
+        Mesa::ModificarEstadoMesa($mesaId);
 
         $productos = $array['productos'];
         foreach($productos as $productoNombre){
@@ -187,57 +190,56 @@ class PedidoController implements IApiUsable
         }
     
         if ($pedido->mesaId === $codigoDeMesa) {
-    
             $productos = ProductosPedidos::TraerProductosDeUnPedido($numeroDePedido);
-    
             $tiemposDeProductos = [];
     
             $fechaAhora = new DateTime('now', new DateTimeZone('America/Argentina/Buenos_Aires'));
     
             foreach ($productos as $producto) {
+                $tiempoInicial = new DateTime($producto['tiempoInicial'], new DateTimeZone('America/Argentina/Buenos_Aires'));
+                $tiempoEstimado = (int)$producto['tiempoEstimado']; 
     
-                $tiempoEstimado = new DateInterval("PT" . $producto['tiempoEstimado'] . "M");
-    
-                $fechaInicial = new DateTime($producto['tiempoInicial'], new DateTimeZone('America/Argentina/Buenos_Aires'));
-    
-                $diferencia = $fechaAhora->diff($fechaInicial);
-                $diferenciaEnMinutos = ($diferencia->h * 60) + $diferencia->i;
-    
-                $tiempoEstimado->i -= $diferenciaEnMinutos;
-    
-                if ($tiempoEstimado->i < 0 || $tiempoEstimado->h < 0) {
-                    $mensaje = "Listo para servir";
+                //el tiempo inicial no sea en el futuro
+                if ($tiempoInicial > $fechaAhora) {
                     $tiemposDeProductos[] = [
                         'producto' => $producto['id'],
-                        'diferencia' => "Han pasado " . $diferencia->h . " horas, " . $diferencia->i . " minutos",
+                        'diferencia' => 'El tiempo inicial es en el futuro.',
+                        'nuevoTiempoEstimado' => 'No se puede calcular'
+                    ];
+                    continue;
+                }
+    
+                $diferencia = $fechaAhora->getTimestamp() - $tiempoInicial->getTimestamp();
+                $diferenciaEnMinutos = (int)($diferencia / 60);
+    
+                $tiempoRestante = $tiempoEstimado - $diferenciaEnMinutos;
+    
+                if ($tiempoRestante <= 0) {
+                    $mensaje = "Avisa al Mozo que ya esta para servir";
+                    $tiemposDeProductos[] = [
+                        'producto' => $producto['id'],
+                        'diferencia' => "Han pasado $diferenciaEnMinutos minutos",
                         'nuevoTiempoEstimado' => $mensaje
                     ];
                 } else {
-
-                    //ajustar minutos si es negativo
-                    //ajustar minutos si es negativo
-                    
-                    if ($tiempoEstimado->i < 0) {
-                        $tiempoEstimado->h -= 1;
-                        $tiempoEstimado->i += 60; 
-                    }
+                    $horasRestantes = intdiv($tiempoRestante, 60);
+                    $minutosRestantes = $tiempoRestante % 60;
     
                     $tiemposDeProductos[] = [
                         'producto' => $producto['id'],
-                        'diferencia' => "Han pasado " . $diferencia->h . " horas, " . $diferencia->i . " minutos",
-                        'nuevoTiempoEstimado' => $tiempoEstimado->format('%H:%I:%S')
+                        'diferencia' => "Han pasado $diferenciaEnMinutos minutos",
+                        'nuevoTiempoEstimado' => sprintf('%02d:%02d', $horasRestantes, $minutosRestantes)
                     ];
                 }
             }
     
-
-            $response->getBody()->write(json_encode(array(
+            $response->getBody()->write(json_encode([
                 "mensaje" => $tiemposDeProductos
-            )));
+            ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } else {
             $mensaje = 'No concuerda el pedido con la mesa.';
-            $response->getBody()->write(json_encode(array("mensaje" => $mensaje)));
+            $response->getBody()->write(json_encode(["mensaje" => $mensaje]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
     }
@@ -255,9 +257,12 @@ class PedidoController implements IApiUsable
                 break;
             }
         }
-    
+
+        $codigoDeMEsa = ProductosPedidos::ObtenerMesaPorNumeroDePedido($numeroDePedido);
+
+
         if ($listoParaServir) {
-            $payload = json_encode(array("mensaje" => "Todos los productos del pedido $numeroDePedido están listos para servir."));
+            $payload = json_encode(array("mensaje" => "Todos los productos del pedido $numeroDePedido están listos para servir. MESA: $codigoDeMEsa"));
         } else {
             $payload = json_encode(array("mensaje" => "El pedido $numeroDePedido no está listo para servir. Hay productos 'en preparacion' o 'pendientes'."));
         }
@@ -450,6 +455,36 @@ class PedidoController implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
 
     }
+
+    public static function CobrarCuenta($request, $response, $args)
+    {
+        $parametros = $request->getParsedBody();
+        $numeroDePedido = $parametros['numeroDePedido'];
+    
+        $pedido = Pedido::obtenerPedidoPorNumeroDePedido($numeroDePedido);
+        if (!$pedido) {
+            $response->getBody()->write(json_encode(["mensaje" => "Pedido no encontrado."]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+    
+        $productos = ProductosPedidos::ObtenerProductosPorPedido($numeroDePedido);
+    
+        $total = 0;
+        foreach ($productos as $producto) {
+            $total += (float)$producto->precio;
+        }
+    
+        $mensaje = [
+            "numeroDePedido" => $numeroDePedido,
+            "productos" => $productos,
+            "total" => $total,
+            "Mensaje de la casa" => "Si le gusto vuelva!! =)"
+        ];
+    
+        $response->getBody()->write(json_encode($mensaje));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+    
     
 
 

@@ -224,5 +224,56 @@ class Mesa
     
         return $response->withHeader('Content-Type', 'application/pdf');
     }
+
+    public static function ModificarEstadoMesa($codigoDeIdentificacion)
+    {
+        $nuevoEstado = "con cliente esperando pedido";
+    
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "UPDATE mesas 
+            SET estado = :estado 
+            WHERE codigoDeIdentificacion = :codigoDeIdentificacion"
+        );
+    
+        $consulta->bindValue(':estado', $nuevoEstado, PDO::PARAM_STR);
+        $consulta->bindValue(':codigoDeIdentificacion', $codigoDeIdentificacion, PDO::PARAM_STR);
+    
+        if ($consulta->execute()) {
+            return ["mensaje" => "Estado de la mesa actualizado correctamente."];
+        } else {
+            return ["mensaje" => "No se pudo actualizar el estado de la mesa."];
+        }
+    }
+    public static function ObtenerPorCodigo($codigoDeIdentificacion)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM mesas WHERE codigoDeIdentificacion = :codigo");
+        $consulta->bindValue(':codigo', $codigoDeIdentificacion, PDO::PARAM_STR);
+        $consulta->execute();
+        return $consulta->fetch(PDO::FETCH_OBJ);
+    }
+
+    public static function ModificarEstado($id, $nuevoEstado)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "UPDATE mesas 
+             SET estado = :estado 
+             WHERE id = :id"
+        );
+    
+        $consulta->bindValue(':estado', $nuevoEstado, PDO::PARAM_STR);
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+    
+        if ($consulta->execute()) {
+            return ["mensaje" => "Estado de la mesa con ID $id actualizado correctamente a '$nuevoEstado'."];
+        } else {
+            return ["mensaje" => "No se pudo actualizar el estado de la mesa con ID $id."];
+        }
+    }
+    
+
+    
     
 }

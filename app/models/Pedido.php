@@ -73,7 +73,7 @@ class Pedido
     public static function obtenerPedidoPorNumeroDePedido($numeroDePedido)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, mesaId, numeroDePedido, precio, fecha, estado, cliente FROM pedidos WHERE numeroDePedido = :numeroDePedido");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, mesaId, numeroDePedido, precio, foto, fecha, estado, cliente FROM pedidos WHERE numeroDePedido = :numeroDePedido");
         $consulta->bindValue(':numeroDePedido', $numeroDePedido, PDO::PARAM_STR);
         $consulta->execute();
     
@@ -165,7 +165,5 @@ class Pedido
     
         return false;
     }
-    
-
 
 }

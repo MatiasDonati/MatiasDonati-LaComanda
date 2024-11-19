@@ -8,7 +8,7 @@ class Usuario
     public $rol;
     public $fechaBaja;
 
-    // public $suspendido;
+    public $suspendido;
 
     public function crearUsuario()
     {

@@ -17,17 +17,21 @@ class ProductosPedidos
 
     public function crearProductosPedidos()
     {
+
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
+    
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productosPedidos (numeroDePedido, productoId, empleadoACargo, precio, estado, tiempoInicial, tiempoFinal, tiempoEstimado) VALUES (:numeroDePedido, :productoId, :empleadoACargo, :precio, :estado, :tiempoInicial, :tiempoFinal, :tiempoEstimado)"
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "INSERT INTO productosPedidos (numeroDePedido, productoId, empleadoACargo, precio, estado, tiempoInicial, tiempoFinal, tiempoEstimado) 
+            VALUES (:numeroDePedido, :productoId, :empleadoACargo, :precio, :estado, :tiempoInicial, :tiempoFinal, :tiempoEstimado)"
         );
-        
+    
         $consulta->bindValue(':numeroDePedido', $this->numeroDePedido, PDO::PARAM_INT);
         $consulta->bindValue(':productoId', $this->productoId, PDO::PARAM_INT);
         $consulta->bindValue(':empleadoACargo', $this->empleadoACargo, PDO::PARAM_INT);
         $consulta->bindValue(':precio', $this->precio, PDO::PARAM_STR);
         $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
-        $consulta->bindValue(':tiempoInicial', date("Y-m-d H:i:s"), PDO::PARAM_STR); //Ahora
-
+        $consulta->bindValue(':tiempoInicial', date("Y-m-d H:i:s"), PDO::PARAM_STR);
         $consulta->bindValue(':tiempoFinal', $this->tiempoFinal, PDO::PARAM_NULL);
         $consulta->bindValue(':tiempoEstimado', $this->tiempoEstimado, PDO::PARAM_NULL);
     
@@ -35,6 +39,7 @@ class ProductosPedidos
     
         return $objAccesoDatos->obtenerUltimoId();
     }
+    
 
     public static function TraerTodosLosProductosPedidos()
     {
@@ -295,6 +300,49 @@ class ProductosPedidos
         $consulta->execute();
         return $consulta->fetchAll(PDO::FETCH_CLASS, "ProductosPedidos");
     }
+
+    public static function ActualizarEstado($id, $nuevoEstado)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "UPDATE productosPedidos 
+            SET estado = :estado 
+            WHERE id = :id"
+        );
+        $consulta->bindValue(':estado', $nuevoEstado, PDO::PARAM_STR);
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+        $consulta->execute();
+    }
+
+    public static function AsignarTiempoEstimado($id, $tiempoEstimado)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "UPDATE productosPedidos 
+            SET tiempoEstimado = :tiempoEstimado 
+            WHERE id = :id"
+        );
+        $consulta->bindValue(':tiempoEstimado', $tiempoEstimado, PDO::PARAM_INT);
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+        $consulta->execute();
+    }
+
+
+    public static function ObtenerMesaPorNumeroDePedido($numeroDePedido)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT mesaId FROM pedidos WHERE numeroDePedido = :numeroDePedido");
+        $consulta->bindValue(':numeroDePedido', $numeroDePedido, PDO::PARAM_STR);
+        $consulta->execute();
+    
+        $resultado = $consulta->fetch(PDO::FETCH_OBJ);
+        return $resultado ? $resultado->mesaId : null;
+    }
+    
+
+
+
+
     
     
 }
